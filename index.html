@@ -1,61 +1,56 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VirtualMix - Xatframe</title>
-  <style>
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: linear-gradient(135deg, #080815, #22002a, #080815);
-      color: white;
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
-
-    header {
-      padding: 35px 20px;
-    }
-
-    h1 {
-      font-size: 48px;
-      color: #ff0080;
-      text-shadow: 0 0 25px #ff0080;
-    }
-
-    .subtitle {
-      letter-spacing: 4px;
-    }
-
-    .radio {
-      margin: 25px auto;
-      padding: 20px;
-      max-width: 500px;
-      border: 1px solid #ff0080;
-      border-radius: 20px;
-      background: #ffffff0d;
-    }
-
-    audio {
-      width: 100%;
-    }
-  </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#030610">
+  <meta name="description" content="VirtualMix — animowane tło xatframe">
+  <title>VirtualMix | Xatframe</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
 </head>
 <body>
-  <header>
-    <h1>VIRTUALMIX</h1>
-    <p class="subtitle">MUSIC NEVER STOPS</p>
-  </header>
-
-  <section class="radio">
-    <h2>RADIO ONLINE</h2>
-    <audio controls>
-      <source src="https://radio.castpol.pl:8060/radio.mp3" type="audio/mpeg">
-    </audio>
-  </section>
+  <!-- Tylko dekoracja w tle: sam czat wyświetla xat/nXat nad tą stroną. -->
+  <div class="stage" aria-hidden="true">
+    <div class="ambient ambient--left"></div><div class="ambient ambient--right"></div>
+    <div class="grid-floor"></div><div class="scanlines"></div>
+    <canvas id="particles"></canvas>
+    <div class="side side--left">
+      <div class="side__panel">
+        <div class="side__edge"></div>
+        <div class="side__top"><span class="side__slashes">▰▰▰</span><span>VIRTUALMIX // BLUE CHANNEL</span></div>
+        <div class="side__mesh"></div>
+        <div class="side__ring ring--one"></div><div class="side__ring ring--two"></div>
+        <div class="side__note">♫</div>
+        <svg class="wave wave--blue" viewBox="0 0 600 180" preserveAspectRatio="none">
+          <path d="M-20 100 C60 10 110 175 190 85 S335 10 405 90 S530 160 620 55"/>
+          <path d="M-20 126 C60 36 120 175 200 100 S335 24 415 104 S535 165 620 83"/>
+          <path d="M-20 145 C70 57 125 180 205 120 S345 35 425 115 S540 173 620 110"/>
+        </svg>
+        <div class="equalizer" data-equalizer></div>
+        <div class="side__bottom">GOOD MUSIC <span>✦</span> GOOD VIBES</div>
+      </div>
+    </div>
+    <div class="side side--right">
+      <div class="side__panel">
+        <div class="side__edge"></div>
+        <div class="side__top"><span class="side__slashes">▰▰▰</span><span>VIRTUALMIX // ORANGE CHANNEL</span></div>
+        <div class="side__mesh"></div>
+        <div class="side__ring ring--one"></div><div class="side__ring ring--two"></div>
+        <div class="side__note">♬</div>
+        <svg class="wave wave--orange" viewBox="0 0 600 180" preserveAspectRatio="none">
+          <path d="M-20 100 C60 10 110 175 190 85 S335 10 405 90 S530 160 620 55"/>
+          <path d="M-20 126 C60 36 120 175 200 100 S335 24 415 104 S535 165 620 83"/>
+          <path d="M-20 145 C70 57 125 180 205 120 S345 35 425 115 S540 173 620 110"/>
+        </svg>
+        <div class="equalizer" data-equalizer></div>
+        <div class="side__bottom">ON AIR <span>✦</span> VIRTUALMIX</div>
+      </div>
+    </div>
+    <div class="central-space"></div>
+    <div class="bottom-glow"></div>
+    <div class="bottom-caption">VIRTUALMIX <span>✦</span> NIE ŚPIĘ, ZWIEDZAM, POMPOWAĆ!</div>
+  </div>
+  <div class="preview-note" id="previewNote">PODGLĄD — jasny obszar pośrodku odpowiada miejscu na czat. Usuń <b>?preview=1</b> z adresu, aby zobaczyć normalne tło.</div>
 </body>
 </html>
