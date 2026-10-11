@@ -6,7 +6,7 @@
   --chat-safe-height: 650px;
   --side-inset: clamp(8px, 1.3vw, 30px);
   /* Odsunięcie tylko od ZEWNĘTRZNEJ krawędzi ekranu */
-  --outer-trim: 100px;
+  --outer-trim: 50px;
   /* Skrócenie paneli od dołu */
   --bottom-trim: 100px;
 }
