@@ -1,0 +1,61 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VirtualMix - Xatframe</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #080815, #22002a, #080815);
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    header {
+      padding: 35px 20px;
+    }
+
+    h1 {
+      font-size: 48px;
+      color: #ff0080;
+      text-shadow: 0 0 25px #ff0080;
+    }
+
+    .subtitle {
+      letter-spacing: 4px;
+    }
+
+    .radio {
+      margin: 25px auto;
+      padding: 20px;
+      max-width: 500px;
+      border: 1px solid #ff0080;
+      border-radius: 20px;
+      background: #ffffff0d;
+    }
+
+    audio {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>VIRTUALMIX</h1>
+    <p class="subtitle">MUSIC NEVER STOPS</p>
+  </header>
+
+  <section class="radio">
+    <h2>RADIO ONLINE</h2>
+    <audio controls>
+      <source src="https://radio.castpol.pl:8060/radio.mp3" type="audio/mpeg">
+    </audio>
+  </section>
+</body>
+</html>
