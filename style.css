@@ -89,7 +89,7 @@ body { overflow: hidden; background: #03050b; color: #d3efff; font: 14px/1.4 Ari
   .side__tabs { gap: 3px; --tabs-height: 29px; }
 }
 
-/* Wąski, niezależny pasek interaktywny. Nie zmienia położenia paneli. */
+/* V8: szersze, neonowe przyciski u góry – bez zmian paneli. */
 .vm-top-controls {
   position: fixed;
   top: 62px;
@@ -97,48 +97,64 @@ body { overflow: hidden; background: #03050b; color: #d3efff; font: 14px/1.4 Ari
   transform: translateX(-50%);
   width: min(100%, 1303px);
   height: 29px;
-  padding: 0 14px;
+  padding: 0 8px;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: clamp(10px, 2vw, 28px);
+  gap: clamp(12px, 2vw, 30px);
   z-index: 100;
   pointer-events: auto;
 }
 .vm-top-group {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   --button-rgb: 0,170,255;
+  --active-rgb: 255,106,0; /* zaznaczenie pomarańczowe na niebieskich */
 }
-.vm-top-group--orange { --button-rgb: 255,106,0; }
+.vm-top-group--orange {
+  --button-rgb: 255,106,0;
+  --active-rgb: 0,170,255; /* zaznaczenie niebieskie na pomarańczowych */
+}
 .vm-top-button {
   appearance: none;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: clamp(24px, 2.3vw, 32px);
-  height: 26px;
+  flex: 0 0 auto;
+  width: clamp(37px, 3.35vw, 54px);
+  height: 27px;
   padding: 0;
-  border: 1px solid rgba(var(--button-rgb), .65);
-  border-radius: 5px;
-  background: rgba(4,9,22,.93);
-  color: #ecf5ff;
-  font: 800 12px/1 Arial,sans-serif;
+  border: 1px solid rgba(var(--button-rgb), .85);
+  border-radius: 7px;
+  background: linear-gradient(160deg, rgba(var(--button-rgb),.22), rgba(3,8,22,.97) 78%);
+  color: #f3f8ff;
+  font: 800 13px/1 Arial,sans-serif;
+  letter-spacing: .03em;
+  text-shadow: 0 0 7px rgba(var(--button-rgb),.6);
   cursor: pointer;
   pointer-events: auto;
-  box-shadow: inset 0 0 9px rgba(var(--button-rgb),.2);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.16), inset 0 0 11px rgba(var(--button-rgb),.13), 0 1px 8px rgba(var(--button-rgb),.16);
+  transition: background .18s ease, box-shadow .18s ease, border-color .18s ease, color .18s ease;
 }
 .vm-top-button.is-active {
-  background: rgba(var(--button-rgb), .36);
-  border-color: rgba(var(--button-rgb), 1);
-  box-shadow: 0 0 9px rgba(var(--button-rgb), .38);
+  color: #fff;
+  border: 1px solid rgba(var(--active-rgb), 1);
+  background: linear-gradient(160deg, rgba(var(--active-rgb),.82), rgba(var(--active-rgb),.35) 45%, rgba(4,9,22,.95));
+  text-shadow: 0 0 8px rgba(var(--active-rgb),.95);
+  box-shadow: 0 0 12px rgba(var(--active-rgb),.65), inset 0 0 11px rgba(var(--active-rgb),.28), inset 0 1px 0 rgba(255,255,255,.27);
 }
-.vm-top-button:hover,.vm-top-button:focus-visible {outline:1px solid rgba(var(--button-rgb),1);outline-offset:1px;}
+.vm-top-button:hover {
+  border-color: rgba(var(--active-rgb),.95);
+  box-shadow: 0 0 12px rgba(var(--active-rgb),.34), inset 0 0 8px rgba(var(--button-rgb),.16);
+}
+.vm-top-button.is-active:hover {box-shadow: 0 0 15px rgba(var(--active-rgb),.72), inset 0 0 12px rgba(var(--active-rgb),.32);}
+.vm-top-button:focus-visible { outline: 2px solid rgb(var(--active-rgb)); outline-offset: 2px; }
 @media(max-width:950px) {
-  .vm-top-controls {padding:0 5px;gap:9px;}
-  .vm-top-group {gap:3px;}
-  .vm-top-button {width:23px;height:25px;font-size:11px;}
+  .vm-top-controls { padding: 0 5px; gap: 10px; }
+  .vm-top-group { gap: 3px; }
+  .vm-top-button { width: clamp(32px, 4vw, 40px); height: 26px; font-size: 12px; }
 }
 .central-space {position:absolute;z-index:3;top:50%;left:50%;width:min(100vw,var(--chat-safe-width));height:min(94vh,var(--chat-safe-height));transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(2,3,11,.24),transparent 76%);}
 .bottom-glow {position:absolute;bottom:-12%;left:10%;right:10%;height:30%;background:radial-gradient(ellipse,#1368f530,transparent 65%);filter:blur(28px);}
