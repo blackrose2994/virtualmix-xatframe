@@ -6,21 +6,29 @@
   <meta name="theme-color" content="#030610">
   <meta name="description" content="VirtualMix — animowane tło xatframe">
   <title>VirtualMix | Xatframe</title>
-  <link rel="stylesheet" href="style.css?v=5">
-  <script src="script.js?v=5" defer></script>
+  <link rel="stylesheet" href="style.css?v=6">
+  <script src="script.js?v=6" defer></script>
 </head>
 <body>
+  <!-- Mały pasek w górnej strefie sterowania (wzorowany na układzie Trade). -->
+  <header class="vm-top-controls" aria-label="Przełączanie zawartości paneli VirtualMix">
+    <nav class="vm-top-group vm-top-group--blue" aria-label="Lewy panel">
+      <button class="vm-top-button is-active" type="button" data-tab="1" aria-pressed="true" title="Lewy panel: muzyka">BLUE</button>
+      <button class="vm-top-button" type="button" data-tab="2" aria-pressed="false" title="Lewy panel: zakładka 2">✦</button>
+      <button class="vm-top-button" type="button" data-tab="3" aria-pressed="false" title="Lewy panel: zakładka 3">✦</button>
+    </nav>
+    <nav class="vm-top-group vm-top-group--orange" aria-label="Prawy panel">
+      <button class="vm-top-button is-active" type="button" data-tab="4" aria-pressed="true" title="Prawy panel: muzyka">ORANGE</button>
+      <button class="vm-top-button" type="button" data-tab="5" aria-pressed="false" title="Prawy panel: zakładka 5">✦</button>
+      <button class="vm-top-button" type="button" data-tab="6" aria-pressed="false" title="Prawy panel: zakładka 6">✦</button>
+    </nav>
+  </header>
   <!-- Tylko dekoracja w tle: sam czat wyświetla xat/nXat nad tą stroną. -->
   <div class="stage">
     <div class="ambient ambient--left"></div><div class="ambient ambient--right"></div>
     <div class="grid-floor"></div><div class="scanlines"></div>
     <canvas id="particles"></canvas>
     <div class="side side--left" data-side="left">
-      <nav class="side__tabs" aria-label="Zakładki lewego panelu">
-        <button type="button" class="side__tab is-active" data-tab="1" aria-pressed="true">BLUE</button>
-        <button type="button" class="side__tab" data-tab="2" aria-pressed="false">✦</button>
-        <button type="button" class="side__tab" data-tab="3" aria-pressed="false">✦</button>
-      </nav>
       <div class="side__panel">
         <div class="side__edge"></div>
         <div class="side__top"><span class="side__slashes">▰▰▰</span><span>VIRTUALMIX \\ BLUE</span></div>
@@ -38,11 +46,6 @@
       </div>
     </div>
     <div class="side side--right" data-side="right">
-      <nav class="side__tabs" aria-label="Zakładki prawego panelu">
-        <button type="button" class="side__tab is-active" data-tab="4" aria-pressed="true">ORANGE</button>
-        <button type="button" class="side__tab" data-tab="5" aria-pressed="false">✦</button>
-        <button type="button" class="side__tab" data-tab="6" aria-pressed="false">✦</button>
-      </nav>
       <div class="side__panel">
         <div class="side__edge"></div>
         <div class="side__top"><span>ORANGE // VIRTUALMIX</span><span class="side__slashes">▰▰▰</span></div>
@@ -63,6 +66,6 @@
     <div class="bottom-glow"></div>
     <div class="bottom-caption">VIRTUALMIX <span>✦</span> NIE ŚPAĆ, ZWIEDZAĆ, POMPOWAĆ!</div>
   </div>
-  <div class="preview-note" id="previewNote">PODGLĄD — jasny obszar pośrodku odpowiada miejscu na czat. W tym podglądzie zakładki są klikalne. Na xat mogą być blokowane przez warstwę czatu.</div>
+  <div class="preview-note" id="previewNote">PODGLĄD — jasny obszar pośrodku odpowiada miejscu na czat. Górne przyciski zmieniają zawartość paneli. Na xat dostępność kliknięć zależy od strefy udostępnionej przez serwis.</div>
 </body>
 </html>
