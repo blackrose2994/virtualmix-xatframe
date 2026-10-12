@@ -6,21 +6,26 @@
   <meta name="theme-color" content="#030610">
   <meta name="description" content="VirtualMix — animowane tło xatframe">
   <title>VirtualMix | Xatframe</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
+  <link rel="stylesheet" href="style.css?v=5">
+  <script src="script.js?v=5" defer></script>
 </head>
 <body>
   <!-- Tylko dekoracja w tle: sam czat wyświetla xat/nXat nad tą stroną. -->
-  <div class="stage" aria-hidden="true">
+  <div class="stage">
     <div class="ambient ambient--left"></div><div class="ambient ambient--right"></div>
     <div class="grid-floor"></div><div class="scanlines"></div>
     <canvas id="particles"></canvas>
-    <div class="side side--left">
+    <div class="side side--left" data-side="left">
+      <nav class="side__tabs" aria-label="Zakładki lewego panelu">
+        <button type="button" class="side__tab is-active" data-tab="1" aria-pressed="true">1</button>
+        <button type="button" class="side__tab" data-tab="2" aria-pressed="false">2</button>
+        <button type="button" class="side__tab" data-tab="3" aria-pressed="false">3</button>
+      </nav>
       <div class="side__panel">
         <div class="side__edge"></div>
         <div class="side__top"><span class="side__slashes">▰▰▰</span><span>VIRTUALMIX \\ BLUE</span></div>
         <div class="side__mesh"></div>
-        <div class="side__ring ring--one"></div><div class="side__ring ring--two"></div>
+        <div class="side__home"><div class="side__ring ring--one"></div><div class="side__ring ring--two"></div>
         <div class="side__note">♫</div>
         <svg class="wave wave--blue" viewBox="0 0 600 180" preserveAspectRatio="none">
           <path d="M-20 100 C60 10 110 175 190 85 S335 10 405 90 S530 160 620 55"/>
@@ -28,15 +33,21 @@
           <path d="M-20 145 C70 57 125 180 205 120 S345 35 425 115 S540 173 620 110"/>
         </svg>
         <div class="equalizer" data-equalizer></div>
-        <div class="side__bottom">MUZYKA <span>✦</span> NA ŻYWO</div>
+        <div class="side__bottom">MUZYKA <span>✦</span> NA ŻYWO</div></div>
+        <div class="side__empty" hidden aria-label="Miejsce na przyszłą zawartość"></div>
       </div>
     </div>
-    <div class="side side--right">
+    <div class="side side--right" data-side="right">
+      <nav class="side__tabs" aria-label="Zakładki prawego panelu">
+        <button type="button" class="side__tab is-active" data-tab="4" aria-pressed="true">4</button>
+        <button type="button" class="side__tab" data-tab="5" aria-pressed="false">5</button>
+        <button type="button" class="side__tab" data-tab="6" aria-pressed="false">6</button>
+      </nav>
       <div class="side__panel">
         <div class="side__edge"></div>
-        <div class="side__top"><span>ORANGE // VIRTUALMIX</span><span class="side__slashes">▰▰▰</span></div>
+        <div class="side__top"><span class="side__slashes">▰▰▰</span><span>ORANGE // VIRTUALMIX</span></div>
         <div class="side__mesh"></div>
-        <div class="side__ring ring--one"></div><div class="side__ring ring--two"></div>
+        <div class="side__home"><div class="side__ring ring--one"></div><div class="side__ring ring--two"></div>
         <div class="side__note">♬</div>
         <svg class="wave wave--orange" viewBox="0 0 600 180" preserveAspectRatio="none">
           <path d="M-20 100 C60 10 110 175 190 85 S335 10 405 90 S530 160 620 55"/>
@@ -44,13 +55,14 @@
           <path d="M-20 145 C70 57 125 180 205 120 S345 35 425 115 S540 173 620 110"/>
         </svg>
         <div class="equalizer" data-equalizer></div>
-        <div class="side__bottom">EKIPA <span>✦</span> ZABAWA</div>
+        <div class="side__bottom">EKIPA <span>✦</span> ZABAWA</div></div>
+        <div class="side__empty" hidden aria-label="Miejsce na przyszłą zawartość"></div>
       </div>
     </div>
     <div class="central-space"></div>
     <div class="bottom-glow"></div>
     <div class="bottom-caption">VIRTUALMIX <span>✦</span> NIE ŚPAĆ, ZWIEDZAĆ, POMPOWAĆ!</div>
   </div>
-  <div class="preview-note" id="previewNote">PODGLĄD — jasny obszar pośrodku odpowiada miejscu na czat. Usuń <b>?preview=1</b> z adresu, aby zobaczyć normalne tło.</div>
+  <div class="preview-note" id="previewNote">PODGLĄD — jasny obszar pośrodku odpowiada miejscu na czat. W tym podglądzie zakładki są klikalne. Na xat mogą być blokowane przez warstwę czatu.</div>
 </body>
 </html>
