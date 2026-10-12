@@ -176,3 +176,56 @@ body.is-preview .central-space {border:2px dashed #ffc85777;background:#8d95b216
 @media(max-width:760px){:root{--outer-trim:10px;--bottom-trim:40px}.side__panel{opacity:.45}.side__note{display:none}.bottom-caption{display:none}}
 @media(min-width:2400px){:root{--chat-safe-width:900px;--chat-safe-height:800px}.side{top:14vh;bottom:14vh}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}#particles{display:none}}
+
+/* MINI RAMÓWKA — lewy panel, zakładka 2. Nie zmienia rozmiarów paneli. */
+.side__schedule[hidden] { display: none !important; }
+.side__schedule {
+  position: absolute;
+  z-index: 7;
+  inset: 44px 7px 39px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  color: #eaf7ff;
+  font: 12px/1.24 Arial, sans-serif;
+  pointer-events: none;
+}
+.vm-schedule-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 2px 7px;
+  padding: 5px 2px 7px;
+  text-align: center;
+  border-bottom: 1px solid rgba(0,170,255,.26);
+}
+.vm-schedule-head strong {font-size: clamp(9px,.78vw,12px);letter-spacing:.08em;color:#7ad9ff;text-shadow:0 0 10px #00aaff85;}
+.vm-schedule-head span {font-size:10px;opacity:.8;white-space:nowrap;}
+.vm-schedule-list {min-height:0;flex:1;overflow:hidden;padding:5px 1px;display:flex;flex-direction:column;gap:5px;}
+.vm-schedule-entry {display:grid;grid-template-columns:clamp(25px,2.5vw,37px) minmax(0,1fr);gap:7px;align-items:center;
+  min-width:0;padding:5px 6px;border:1px solid rgba(0,170,255,.19);border-radius:9px;
+  background:linear-gradient(110deg,#071828d9,#091020e0);}
+.vm-schedule-entry.is-current {border-color:#ff952f; background:linear-gradient(110deg,#2b1b13ee,#0b1b2aea);box-shadow:0 0 10px #ff6a0040,inset 3px 0 #ff9500;}
+.vm-schedule-entry.is-canceled {opacity:.48;}
+.vm-schedule-avatar {width:clamp(25px,2.5vw,37px);height:clamp(25px,2.5vw,37px);border-radius:50%;object-fit:cover;
+  border:1px solid #00aaff8a;background:#0b3045;box-shadow:0 0 7px #00aaff33;}
+.vm-schedule-avatar-fallback {display:grid;place-items:center;color:#8ddbff;font-size:16px;font-weight:bold;}
+.vm-schedule-entry.is-current .vm-schedule-avatar {border-color:#ff9426;}
+.vm-schedule-info {min-width:0;display:flex;flex-direction:column;gap:2px;}
+.vm-schedule-time {font-size:clamp(9px,.7vw,11px);color:#8bcdf2;font-weight:700;white-space:nowrap;}
+.vm-schedule-entry.is-current .vm-schedule-time {color:#ffbb83;}
+.vm-schedule-presenter {display:block;min-width:0;max-width:100%;font-size:clamp(10px,.78vw,13px);font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.vm-schedule-now {display:inline-block;margin-left:5px;color:#ffb269;font-size:9px;letter-spacing:.04em;}
+.vm-schedule-status {padding:11px 4px;text-align:center;color:#add2ea;font-size:11px;}
+.vm-schedule-status:empty {display:none;}
+.vm-schedule-footer {padding-top:5px;text-align:center;letter-spacing:.07em;font-size:8px;opacity:.55;border-top:1px solid #00aaff29;}
+@media(max-width:1250px) {
+ .side__schedule {inset:14px 4px 14px;}
+ .vm-schedule-head {padding:2px 0 4px;}
+ .vm-schedule-entry {padding:4px 3px;gap:4px;grid-template-columns:25px minmax(0,1fr);}
+ .vm-schedule-avatar {width:25px;height:25px;}
+ .vm-schedule-footer {font-size:7px;}
+}
+@media(max-height:700px) {.side__schedule {inset:13px 4px 12px;}.vm-schedule-footer {display:none;}.vm-schedule-list {gap:3px;}.vm-schedule-entry {padding-top:3px;padding-bottom:3px;}}
