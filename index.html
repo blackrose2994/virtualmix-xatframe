@@ -6,21 +6,21 @@
   <meta name="theme-color" content="#030610">
   <meta name="description" content="VirtualMix — animowane tło xatframe">
   <title>VirtualMix | Xatframe</title>
-  <link rel="stylesheet" href="style.css?v=7">
-  <script src="script.js?v=7" defer></script>
+  <link rel="stylesheet" href="style.css?v=11">
+  <script src="script.js?v=11" defer></script>
 </head>
 <body>
   <!-- Mały pasek w górnej strefie sterowania (wzorowany na układzie Trade). -->
   <header class="vm-top-controls" aria-label="Przełączanie zawartości paneli VirtualMix">
     <nav class="vm-top-group vm-top-group--blue" aria-label="Lewy panel">
-      <button class="vm-top-button is-active" type="button" data-tab="1" aria-pressed="true" title="Lewy Panel: ✦">✦</button>
-      <button class="vm-top-button" type="button" data-tab="2" aria-pressed="false" title="Lewy Panel: Ramówka">RAMÓWKA</button>
-      <button class="vm-top-button" type="button" data-tab="3" aria-pressed="false" title="Lewy Panel: Ekipa">EKIPA</button>
+      <button class="vm-top-button is-active" type="button" data-tab="1" aria-pressed="true" title="Lewy panel: ✦">✦</button>
+      <button class="vm-top-button" type="button" data-tab="2" aria-pressed="false" title="Lewy panel: ramówka na dziś">RAMÓWKA</button>
+      <button class="vm-top-button" type="button" data-tab="3" aria-pressed="false" title="Lewy panel: Ekipa">EKIPA</button>
     </nav>
     <nav class="vm-top-group vm-top-group--orange" aria-label="Prawy panel">
-      <button class="vm-top-button is-active" type="button" data-tab="4" aria-pressed="true" title="Prawy Panel: ✦">✦</button>
-      <button class="vm-top-button" type="button" data-tab="5" aria-pressed="false" title="Prawy Panel: Live">LIVE</button>
-      <button class="vm-top-button" type="button" data-tab="6" aria-pressed="false" title="Prawy Panel: Forum">FORUM</button>
+      <button class="vm-top-button is-active" type="button" data-tab="4" aria-pressed="true" title="Prawy panel: ✦">✦</button>
+      <button class="vm-top-button" type="button" data-tab="5" aria-pressed="false" title="Prawy panel: Live">LIVE</button>
+      <button class="vm-top-button" type="button" data-tab="6" aria-pressed="false" title="Prawy panel: Forum">FORUM</button>
     </nav>
   </header>
   <!-- Tylko dekoracja w tle: sam czat wyświetla xat/nXat nad tą stroną. -->
@@ -47,6 +47,15 @@
         </svg>
         <div class="equalizer" data-equalizer></div>
         <div class="side__bottom">MUZYKA <span>✦</span> NA ŻYWO</div></div>
+        <section class="side__schedule" hidden data-schedule aria-label="Ramówka na dzisiaj">
+          <div class="vm-schedule-head">
+            <strong>RAMÓWKA NA DZIŚ</strong>
+            <span data-schedule-date>—</span>
+          </div>
+          <div class="vm-schedule-status" data-schedule-status aria-live="polite">Ładowanie ramówki…</div>
+          <div class="vm-schedule-list" data-schedule-list></div>
+          <div class="vm-schedule-footer">CZAS POLSKI · EUROPE/WARSAW</div>
+        </section>
         <div class="side__empty" hidden aria-label="Miejsce na przyszłą zawartość"></div>
       </div>
     </div>
@@ -58,7 +67,7 @@
       </div>
       <div class="side__panel">
         <div class="side__edge"></div>
-        <div class="side__top">ORANGE // VIRTUALMIX</span><span class="side__slashes">▰▰▰</span><span></div>
+        <div class="side__top"><span>ORANGE // VIRTUALMIX</span><span class="side__slashes">▰▰▰</span></div>
         <div class="side__mesh"></div>
         <div class="side__home"><div class="side__ring ring--one"></div><div class="side__ring ring--two"></div>
         <div class="side__note">♬</div>
