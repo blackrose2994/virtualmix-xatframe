@@ -32,6 +32,10 @@
         tab.classList.toggle('is-active', selected);
         tab.setAttribute('aria-pressed', String(selected));
       });
+      // Nad panelem pokazujemy tę samą aktywną zakładkę, co nad czatem.
+      side.querySelectorAll('[data-tab-indicator]').forEach(indicator => {
+        indicator.classList.toggle('is-active', Number(indicator.dataset.tabIndicator) === active);
+      });
       side.querySelector('.side__home').hidden = active !== initial;
       side.querySelector('.side__empty').hidden = active === initial;
     });
