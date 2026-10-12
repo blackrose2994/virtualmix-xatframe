@@ -70,3 +70,10 @@ body.is-preview .central-space {border:2px dashed #ffc85777;background:#8d95b216
 @media(max-width:760px){:root{--outer-trim:10px;--bottom-trim:40px}.side__panel{opacity:.45}.side__note{display:none}.bottom-caption{display:none}}
 @media(min-width:2400px){:root{--chat-safe-width:900px;--chat-safe-height:800px}.side{top:14vh;bottom:14vh}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}#particles{display:none}}
+/* Pozwól zakładkom odbierać kliknięcia */
+.side__tabs,
+.side__tabs button,
+.side__tabs .tab {
+  pointer-events: auto !important;
+  cursor: pointer;
+}
