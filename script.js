@@ -18,20 +18,22 @@
     el.appendChild(frag);
   });
 
-  // Niezależne przełączanie lewej i prawej strony.
-  document.querySelectorAll('[data-side]').forEach(side => {
-    const initial = side.dataset.side === 'left' ? '1' : '4';
-    side.querySelectorAll('.side__tab').forEach(button => {
-      button.addEventListener('click', () => {
-        const active = button.dataset.tab;
-        side.querySelectorAll('.side__tab').forEach(tab => {
-          const selected = tab === button;
-          tab.classList.toggle('is-active', selected);
-          tab.setAttribute('aria-pressed', String(selected));
-        });
-        side.querySelector('.side__home').hidden = active !== initial;
-        side.querySelector('.side__empty').hidden = active === initial;
+  // Niezależne sterowanie panelami z małego paska nad czatem.
+  document.querySelectorAll('.vm-top-button').forEach(button => {
+    button.addEventListener('click', () => {
+      const active = Number(button.dataset.tab);
+      const isLeft = active <= 3;
+      const side = document.querySelector(`[data-side="${isLeft ? 'left' : 'right'}"]`);
+      if (!side) return;
+      const initial = isLeft ? 1 : 4;
+      const group = button.closest('.vm-top-group');
+      group.querySelectorAll('.vm-top-button').forEach(tab => {
+        const selected = tab === button;
+        tab.classList.toggle('is-active', selected);
+        tab.setAttribute('aria-pressed', String(selected));
       });
+      side.querySelector('.side__home').hidden = active !== initial;
+      side.querySelector('.side__empty').hidden = active === initial;
     });
   });
 
