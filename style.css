@@ -89,7 +89,7 @@ body { overflow: hidden; background: #03050b; color: #d3efff; font: 14px/1.4 Ari
   .side__tabs { gap: 3px; --tabs-height: 29px; }
 }
 
-/* V8: szersze, neonowe przyciski u góry – bez zmian paneli. */
+/* V9: szersze przyciski pod napisy RAMÓWKA, EKIPA, POZDRO i FORUM. */
 .vm-top-controls {
   position: fixed;
   top: 62px;
@@ -101,7 +101,7 @@ body { overflow: hidden; background: #03050b; color: #d3efff; font: 14px/1.4 Ari
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: clamp(12px, 2vw, 30px);
+  gap: clamp(8px, 1.4vw, 22px);
   z-index: 100;
   pointer-events: auto;
 }
@@ -123,7 +123,9 @@ body { overflow: hidden; background: #03050b; color: #d3efff; font: 14px/1.4 Ari
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
-  width: clamp(37px, 3.35vw, 54px);
+  width: clamp(88px, 7.5vw, 116px);
+  white-space: nowrap;
+  padding: 0 9px;
   height: 27px;
   padding: 0;
   border: 1px solid rgba(var(--button-rgb), .85);
@@ -154,7 +156,7 @@ body { overflow: hidden; background: #03050b; color: #d3efff; font: 14px/1.4 Ari
 @media(max-width:950px) {
   .vm-top-controls { padding: 0 5px; gap: 10px; }
   .vm-top-group { gap: 3px; }
-  .vm-top-button { width: clamp(32px, 4vw, 40px); height: 26px; font-size: 12px; }
+  .vm-top-button { width: clamp(78px, 9vw, 88px); height: 26px; font-size: 11px; padding: 0 5px; }
 }
 .central-space {position:absolute;z-index:3;top:50%;left:50%;width:min(100vw,var(--chat-safe-width));height:min(94vh,var(--chat-safe-height));transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(2,3,11,.24),transparent 76%);}
 .bottom-glow {position:absolute;bottom:-12%;left:10%;right:10%;height:30%;background:radial-gradient(ellipse,#1368f530,transparent 65%);filter:blur(28px);}
