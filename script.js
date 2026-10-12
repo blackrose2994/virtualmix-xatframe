@@ -18,6 +18,23 @@
     el.appendChild(frag);
   });
 
+  // Niezależne przełączanie lewej i prawej strony.
+  document.querySelectorAll('[data-side]').forEach(side => {
+    const initial = side.dataset.side === 'left' ? '1' : '4';
+    side.querySelectorAll('.side__tab').forEach(button => {
+      button.addEventListener('click', () => {
+        const active = button.dataset.tab;
+        side.querySelectorAll('.side__tab').forEach(tab => {
+          const selected = tab === button;
+          tab.classList.toggle('is-active', selected);
+          tab.setAttribute('aria-pressed', String(selected));
+        });
+        side.querySelector('.side__home').hidden = active !== initial;
+        side.querySelector('.side__empty').hidden = active === initial;
+      });
+    });
+  });
+
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const canvas = document.getElementById('particles');
   const ctx = canvas.getContext('2d', {alpha: true});
@@ -68,4 +85,3 @@
   window.addEventListener('resize',resize,{passive:true});
   window.addEventListener('pagehide',()=>cancelAnimationFrame(raf));
 })();
-
