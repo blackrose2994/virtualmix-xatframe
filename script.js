@@ -302,7 +302,7 @@ if (teamPanel) {
 
       if (teamCount) {
         teamCount.textContent =
-          `${teamPeople.length} osób w ekipie`;
+          `${teamPeople.length} osób`;
       }
 
       refreshTeamLayout();
