@@ -46,6 +46,17 @@ if (teamPanel) {
   teamPanel.hidden = active !== 3;
   if (active === 3) loadTeam();
 }
+       
+      // LIVE — uruchamianie tylko w zakładce 5
+      const livePanel = side.querySelector('[data-live]');
+
+      if (livePanel) {
+        const showLive = active === 5;
+
+        livePanel.hidden = !showLive;
+        setLivePreview(showLive);
+      }
+
     });
   });
 
@@ -338,6 +349,33 @@ if (teamPanel) {
       loadTeam(true);
     }
   }, 300000);
+
+   
+  // =========================================
+  // VIRTUALMIX — PODGLĄD LIVE BEZ DŹWIĘKU
+  // =========================================
+
+  const LIVE_PREVIEW_URL =
+    'https://virtualmix.pl/vm_live_embed_proxy.php?muted_preview=1';
+
+  const liveFrame =
+    document.querySelector('[data-live-frame]');
+
+  let livePreviewEnabled = false;
+
+  function setLivePreview(enabled) {
+    if (!liveFrame) return;
+
+    if (enabled && !livePreviewEnabled) {
+      liveFrame.src = LIVE_PREVIEW_URL;
+      livePreviewEnabled = true;
+    }
+
+    if (!enabled && livePreviewEnabled) {
+      liveFrame.removeAttribute('src');
+      livePreviewEnabled = false;
+    }
+  }
 
 
   // Publiczne proxy ramówki VirtualMix.
