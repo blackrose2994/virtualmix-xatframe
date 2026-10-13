@@ -93,7 +93,7 @@
     const name=document.createElement('div');name.className='vm-schedule-presenter';
     name.textContent=String(row.presenter || 'VirtualMix');
     name.title=String(row.presenter || 'VirtualMix');
-    if(current){ const now=document.createElement('span');now.className='vm-schedule-now';now.textContent='● NA ŻYWO';time.append(now);}
+    if(current){ const now=document.createElement('span');now.className='vm-schedule-now';now.textContent='TERAZ';time.append(now);}
     if(isCanceled(row)){const cancel=document.createElement('span');cancel.className='vm-schedule-now';cancel.textContent='ODWOŁANA';time.append(cancel);}
     info.append(time,name);article.append(avatar,info);
     return article;
