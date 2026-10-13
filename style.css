@@ -462,3 +462,113 @@ body.is-preview .central-space {border:2px dashed #ffc85777;background:#8d95b216
   }
 }
 
+
+/* =========================================
+   EKIPA VIRTUALMIX — KOMPAKTOWE KARTY
+   ========================================= */
+
+.vm-team-viewport {
+  padding: 4px 1px;
+  mask-image: none;
+}
+
+.vm-team-list {
+  gap: 5px;
+  padding: 2px 1px;
+}
+
+.vm-team-card {
+  grid-template-columns: 32px minmax(0,1fr);
+  gap: 7px;
+  padding: 5px 7px;
+  min-height: 43px;
+  border-radius: 8px;
+}
+
+.vm-team-avatar {
+  width: 32px;
+  height: 32px;
+  border-width: 1px;
+}
+
+.vm-team-avatar-fallback {
+  font-size: 14px;
+}
+
+.vm-team-details {
+  min-width: 0;
+  gap: 2px;
+}
+
+.vm-team-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  width: 100%;
+  min-width: 0;
+}
+
+.vm-team-nick {
+  flex: 1;
+  min-width: 0;
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.vm-team-meta {
+  font-size: 9px;
+  line-height: 1.2;
+}
+
+.vm-team-badges {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 3px;
+  margin-left: auto;
+}
+
+.vm-team-badge {
+  padding: 2px 4px;
+  font-size: 7px;
+  border-radius: 4px;
+}
+
+.vm-team-head {
+  padding: 3px 2px 6px;
+}
+
+.vm-team-footer {
+  padding-top: 5px;
+}
+
+/* Na mniejszych ekranach */
+@media (max-width:1250px) {
+  .vm-team-card {
+    grid-template-columns: 27px minmax(0,1fr);
+    min-height: 37px;
+    gap: 5px;
+    padding: 4px;
+  }
+
+  .vm-team-avatar {
+    width: 27px;
+    height: 27px;
+  }
+
+  .vm-team-nick {
+    font-size: 10px;
+  }
+
+  .vm-team-meta {
+    font-size: 8px;
+  }
+
+  .vm-team-badge {
+    font-size: 6px;
+    padding: 2px 3px;
+  }
+}
+
