@@ -229,3 +229,19 @@ body.is-preview .central-space {border:2px dashed #ffc85777;background:#8d95b216
  .vm-schedule-footer {font-size:7px;}
 }
 @media(max-height:700px) {.side__schedule {inset:13px 4px 12px;}.vm-schedule-footer {display:none;}.vm-schedule-list {gap:3px;}.vm-schedule-entry {padding-top:3px;padding-bottom:3px;}}
+
+/* Statusy NA ŻYWO i ODWOŁANA po prawej */
+.vm-schedule-presenter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+}
+
+.vm-schedule-now {
+  margin-left: auto;
+  flex-shrink: 0;
+  white-space: nowrap;
+  text-align: right;
+}
+
