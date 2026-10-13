@@ -249,3 +249,216 @@ body.is-preview .central-space {border:2px dashed #ffc85777;background:#8d95b216
 }
 
 
+/* =========================================
+   VIRTUALMIX — EKIPA XATFRAME
+   ========================================= */
+
+.side__team[hidden] {
+  display: none !important;
+}
+
+.side__team {
+  position: absolute;
+  z-index: 7;
+  inset: 44px 7px 39px;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: #eaf7ff;
+  font-family: Arial, sans-serif;
+  pointer-events: none;
+}
+
+.vm-team-head {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 5px 2px 9px;
+  text-align: center;
+  border-bottom: 1px solid rgba(0,170,255,.28);
+}
+
+.vm-team-head strong {
+  color: #7ad9ff;
+  font-size: clamp(10px,.85vw,13px);
+  letter-spacing: .1em;
+  text-shadow: 0 0 12px #00aaff99;
+}
+
+.vm-team-head span {
+  color: #9cbfd9;
+  font-size: 9px;
+  letter-spacing: .08em;
+}
+
+.vm-team-viewport {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  padding: 6px 1px;
+  scrollbar-width: none;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 4%,
+    black 94%,
+    transparent 100%
+  );
+}
+
+.vm-team-viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.vm-team-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 5px 1px 14px;
+}
+
+.vm-team-card {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 46px minmax(0,1fr);
+  align-items: center;
+  gap: 9px;
+  padding: 8px;
+  border: 1px solid rgba(0,170,255,.25);
+  border-radius: 12px;
+  background:
+    linear-gradient(120deg,
+      rgba(0,102,180,.19),
+      rgba(4,10,25,.91) 80%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.07),
+    inset 3px 0 rgba(0,170,255,.35);
+}
+
+.vm-team-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(0,170,255,.7);
+  background: #09243c;
+  box-shadow: 0 0 12px #00aaff33;
+}
+
+.vm-team-avatar-fallback {
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  font-size: 18px;
+  color: #8ddbff;
+}
+
+.vm-team-details {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.vm-team-nick {
+  color: #fff;
+  font-size: clamp(11px,.85vw,14px);
+  font-weight: 900;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-shadow: 0 0 10px #00aaff77;
+}
+
+.vm-team-meta {
+  color: #a0c5de;
+  font-size: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vm-team-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.vm-team-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 6px;
+  border-radius: 5px;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: .03em;
+  white-space: nowrap;
+}
+
+.vm-team-badge--vacation {
+  color: #ffd7cb;
+  border: 1px solid #ff6a0066;
+  background: #ff6a0025;
+}
+
+.vm-team-badge--guest {
+  color: #baffdd;
+  border: 1px solid #24dc8866;
+  background: #24dc8825;
+}
+
+.vm-team-footer {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
+  padding: 7px 2px 0;
+  border-top: 1px solid #00aaff29;
+  color: #7ca4be;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+
+.vm-team-message {
+  padding: 20px 5px;
+  text-align: center;
+  color: #a8d7f0;
+  font-size: 11px;
+}
+
+@media (max-width:1250px) {
+  .side__team {
+    inset: 14px 4px 14px;
+  }
+
+  .vm-team-card {
+    grid-template-columns: 32px minmax(0,1fr);
+    gap: 5px;
+    padding: 5px;
+  }
+
+  .vm-team-avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .vm-team-nick {
+    font-size: 10px;
+  }
+
+  .vm-team-meta {
+    font-size: 9px;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .vm-team-viewport {
+    scroll-behavior: auto;
+  }
+}
+
