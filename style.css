@@ -690,3 +690,57 @@ body.is-preview .central-space {border:2px dashed #ffc85777;background:#8d95b216
     margin: 5px 0;
   }
 }
+
+
+/* =========================================
+   VIRTUALMIX — JEDNA WYSOKOŚĆ FOOTERÓW
+   RAMÓWKA / EKIPA / LIVE
+   ========================================= */
+
+/* Identyczne położenie zawartości paneli */
+.side__schedule,
+.side__team,
+.side__live {
+  bottom: 39px;
+}
+
+/* Każdy footer ma tę samą wysokość */
+.side__schedule .vm-team-footer,
+.side__team .vm-team-footer,
+.side__live .vm-team-footer,
+.vm-schedule-footer,
+.vm-live-footer {
+  flex: 0 0 18px;
+  height: 18px;
+  min-height: 18px;
+  padding: 5px 2px 0;
+  margin: 0;
+  box-sizing: border-box;
+  align-items: flex-start;
+}
+
+/* Licznik ekipy nie wpływa na wysokość footera */
+[data-team-page] {
+  display: block;
+  line-height: 12px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Zachowujemy jednakową pozycję
+   również na mniejszych ekranach */
+@media (max-width: 1250px) {
+  .side__schedule,
+  .side__team,
+  .side__live {
+    bottom: 14px;
+  }
+}
+
+@media (max-height: 700px) {
+  .side__schedule,
+  .side__team,
+  .side__live {
+    bottom: 12px;
+  }
+}
