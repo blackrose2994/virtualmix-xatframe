@@ -572,3 +572,22 @@ body.is-preview .central-space {border:2px dashed #ffc85777;background:#8d95b216
   }
 }
 
+
+/* EKIPA — liczba osób obok nagłówka */
+.vm-team-head {
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+}
+
+.vm-team-head strong {
+  white-space: nowrap;
+}
+
+.vm-team-head span {
+  font-size: 10px;
+  white-space: nowrap;
+  opacity: .8;
+}
