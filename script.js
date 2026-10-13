@@ -37,11 +37,275 @@
         indicator.classList.toggle('is-active', Number(indicator.dataset.tabIndicator) === active);
       });
       side.querySelector('.side__home').hidden = active !== initial;
-      side.querySelector('.side__empty').hidden = active === initial || (isLeft && active === 2);
+      side.querySelector('.side__empty').hidden =
+  active === initial || (isLeft && (active === 2 || active === 3));
       const schedulePanel = side.querySelector('[data-schedule]');
       if (schedulePanel) { schedulePanel.hidden = active !== 2; if (active === 2) loadSchedule(); }
+       const teamPanel = side.querySelector('[data-team]');
+if (teamPanel) {
+  teamPanel.hidden = active !== 3;
+  if (active === 3) loadTeam();
+}
     });
   });
+
+   
+  // =========================================
+  // EKIPA VIRTUALMIX — AUTOMATYCZNY KATALOG
+  // =========================================
+
+  const TEAM_URL =
+    'https://virtualmix.pl/vm_ekipa_proxy.php?format=json';
+
+  const teamPanel = document.querySelector('[data-team]');
+  const teamList = document.querySelector('[data-team-list]');
+  const teamViewport =
+    document.querySelector('[data-team-viewport]');
+  const teamCount =
+    document.querySelector('[data-team-count]');
+  const teamPage =
+    document.querySelector('[data-team-page]');
+
+  let teamLoaded = false;
+  let teamBusy = false;
+  let teamIndex = 0;
+  let teamTimer = null;
+  let teamLastFetch = 0;
+
+  function makeTeamCard(person) {
+    const card = document.createElement('article');
+    card.className = 'vm-team-card';
+
+    const avatarUrl = getSafeAvatar(person.avatar);
+    const avatar = avatarUrl
+      ? document.createElement('img')
+      : document.createElement('span');
+
+    avatar.className = 'vm-team-avatar' +
+      (avatarUrl ? '' : ' vm-team-avatar-fallback');
+
+    if (avatarUrl) {
+      avatar.src = avatarUrl;
+      avatar.alt = '';
+      avatar.loading = 'lazy';
+      avatar.referrerPolicy = 'no-referrer';
+
+      avatar.addEventListener('error', () => {
+        const fallback = document.createElement('span');
+        fallback.className =
+          'vm-team-avatar vm-team-avatar-fallback';
+        fallback.textContent = '♫';
+        avatar.replaceWith(fallback);
+      }, { once: true });
+    } else {
+      avatar.textContent = '♫';
+    }
+
+    const details = document.createElement('div');
+    details.className = 'vm-team-details';
+
+    const nick = document.createElement('div');
+    nick.className = 'vm-team-nick';
+    nick.textContent = String(person.nick || 'Prezenter');
+    nick.title = nick.textContent;
+
+    const meta = document.createElement('div');
+    meta.className = 'vm-team-meta';
+
+    const name = String(person.name || '').trim();
+    const city = String(person.city || '').trim();
+
+    meta.textContent =
+      [name, city].filter(Boolean).join(' · ') ||
+      'Ekipa VirtualMix';
+
+    details.append(nick, meta);
+
+    if (person.guest || person.vacation) {
+      const badges = document.createElement('div');
+      badges.className = 'vm-team-badges';
+
+      if (person.guest) {
+        const guest = document.createElement('span');
+        guest.className =
+          'vm-team-badge vm-team-badge--guest';
+        guest.textContent = 'GOŚCINNIE';
+        badges.append(guest);
+      }
+
+      if (person.vacation) {
+        const vacation = document.createElement('span');
+        vacation.className =
+          'vm-team-badge vm-team-badge--vacation';
+        vacation.textContent = 'URLOP';
+        badges.append(vacation);
+      }
+
+      details.append(badges);
+    }
+
+    card.append(avatar, details);
+    return card;
+  }
+
+  function teamCards() {
+    return Array.from(
+      teamList?.querySelectorAll('.vm-team-card') || []
+    );
+  }
+
+  function showTeamIndex(index) {
+    if (!teamViewport || !teamList ||
+        !teamPanel || teamPanel.hidden) return;
+
+    const cards = teamCards();
+    if (!cards.length) return;
+
+    teamIndex = ((index % cards.length) + cards.length)
+      % cards.length;
+
+    const card = cards[teamIndex];
+
+    // Ruch bez potrzeby myszy lub klikania.
+    const target =
+      card.offsetTop - teamList.offsetTop;
+
+    const maxScroll = Math.max(
+      0,
+      teamViewport.scrollHeight -
+      teamViewport.clientHeight
+    );
+
+    teamViewport.scrollTo({
+      top: Math.min(target, maxScroll),
+      behavior: window.matchMedia(
+        '(prefers-reduced-motion: reduce)'
+      ).matches ? 'instant' : 'smooth'
+    });
+
+    if (teamPage) {
+      teamPage.textContent =
+        `${teamIndex + 1} / ${cards.length}`;
+    }
+  }
+
+  function stopTeamRotation() {
+    if (teamTimer !== null) {
+      clearInterval(teamTimer);
+      teamTimer = null;
+    }
+  }
+
+  function startTeamRotation() {
+    stopTeamRotation();
+
+    if (!teamPanel || teamPanel.hidden ||
+        document.hidden) return;
+
+    if (teamCards().length <= 1) return;
+
+    teamTimer = setInterval(() => {
+      if (!teamPanel.hidden && !document.hidden) {
+        showTeamIndex(teamIndex + 1);
+      }
+    }, 4500);
+  }
+
+  async function loadTeam(force = false) {
+    if (!teamPanel || !teamList ||
+        teamPanel.hidden || teamBusy) return;
+
+    if (!force && teamLoaded &&
+        Date.now() - teamLastFetch < 300000) {
+      startTeamRotation();
+      return;
+    }
+
+    teamBusy = true;
+
+    if (!teamLoaded) {
+      teamList.textContent = 'Ładowanie ekipy…';
+    }
+
+    try {
+      const endpoint = new URL(TEAM_URL);
+      endpoint.searchParams.set('_', Date.now());
+
+      const response = await fetch(endpoint.href, {
+        cache: 'no-store',
+        mode: 'cors'
+      });
+
+      if (!response.ok) {
+        throw new Error('HTTP ' + response.status);
+      }
+
+      const data = await response.json();
+
+      const people = Array.isArray(data)
+        ? data
+        : Array.isArray(data.people)
+          ? data.people
+          : [];
+
+      if (!people.length) {
+        if (!teamLoaded) {
+          teamList.textContent =
+            'Ekipa jest chwilowo niedostępna.';
+        }
+        return;
+      }
+
+      const frag = document.createDocumentFragment();
+
+      people.forEach(person => {
+        if (person && typeof person === 'object') {
+          frag.append(makeTeamCard(person));
+        }
+      });
+
+      stopTeamRotation();
+      teamList.replaceChildren(frag);
+
+      teamLoaded = true;
+      teamLastFetch = Date.now();
+      teamIndex = 0;
+
+      if (teamCount) {
+        teamCount.textContent =
+          `${people.length} osób w ekipie`;
+      }
+
+      showTeamIndex(0);
+      startTeamRotation();
+
+    } catch (error) {
+      console.warn('VirtualMix ekipa:', error);
+
+      if (!teamLoaded) {
+        teamList.textContent =
+          'Nie udało się pobrać ekipy.';
+      }
+    } finally {
+      teamBusy = false;
+    }
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      stopTeamRotation();
+    } else if (teamPanel && !teamPanel.hidden) {
+      startTeamRotation();
+    }
+  });
+
+  // Odświeżenie danych co 5 minut podczas
+  // otwartej zakładki EKIPA.
+  setInterval(() => {
+    if (teamPanel && !teamPanel.hidden) {
+      loadTeam(true);
+    }
+  }, 300000);
 
   // Publiczne proxy ramówki VirtualMix.
   const SCHEDULE_PROXY_URL = 'https://virtualmix.pl/vm_schedule_week_proxy.php';
