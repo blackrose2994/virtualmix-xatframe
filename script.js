@@ -368,6 +368,7 @@ if (teamPanel) {
 
     if (enabled && !livePreviewEnabled) {
       liveFrame.src = LIVE_PREVIEW_URL;
+       checkLivePermissions();
       livePreviewEnabled = true;
     }
 
