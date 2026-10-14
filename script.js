@@ -39,8 +39,20 @@
       side.querySelector('.side__home').hidden = active !== initial;
       side.querySelector('.side__empty').hidden =
   active === initial || (isLeft && (active === 2 || active === 3)) || (!isLeft && active === 5);
-      const schedulePanel = side.querySelector('[data-schedule]');
-      if (schedulePanel) { schedulePanel.hidden = active !== 2; if (active === 2) loadSchedule(); }
+      
+const schedulePanel = side.querySelector('[data-schedule]');
+
+if (schedulePanel) {
+  schedulePanel.hidden = active !== 2;
+
+  if (active === 2) {
+    loadSchedule();
+    requestAnimationFrame(startScheduleScroll);
+  } else {
+    stopScheduleScroll();
+  }
+}
+
        const teamPanel = side.querySelector('[data-team]');
 if (teamPanel) {
   teamPanel.hidden = active !== 3;
@@ -518,6 +530,118 @@ if (teamPanel) {
   const SCHEDULE_PROXY_URL = 'https://virtualmix.pl/vm_schedule_week_proxy.php';
   const schedulePanel = document.querySelector('[data-schedule]');
   const scheduleList = document.querySelector('[data-schedule-list]');
+   
+  // =========================================
+  // RAMÓWKA — PŁYNNE PRZEWIJANIE GÓRA/DÓŁ
+  // =========================================
+
+  const SCHEDULE_SCROLL_SPEED = 25; // piksele na sekundę
+  const SCHEDULE_PAUSE_MS = 2200;    // pauza na końcach
+
+  let scheduleScrollFrame = null;
+  let scheduleScrollDirection = 1;
+  let scheduleScrollLastTime = 0;
+  let scheduleScrollPauseUntil = 0;
+
+  function stopScheduleScroll() {
+    if (scheduleScrollFrame !== null) {
+      cancelAnimationFrame(scheduleScrollFrame);
+      scheduleScrollFrame = null;
+    }
+    scheduleScrollLastTime = 0;
+  }
+
+  function startScheduleScroll() {
+    stopScheduleScroll();
+
+    if (!schedulePanel ||
+        schedulePanel.hidden ||
+        !scheduleList ||
+        document.hidden) return;
+
+    const maxScroll =
+      scheduleList.scrollHeight - scheduleList.clientHeight;
+
+    if (maxScroll <= 2) {
+      scheduleList.scrollTop = 0;
+      return;
+    }
+
+    scheduleList.scrollTop = 0;
+    scheduleScrollDirection = 1;
+    scheduleScrollPauseUntil =
+      performance.now() + SCHEDULE_PAUSE_MS;
+
+    function animate(time) {
+      if (schedulePanel.hidden || document.hidden) {
+        stopScheduleScroll();
+        return;
+      }
+
+      const max =
+        Math.max(0,
+          scheduleList.scrollHeight -
+          scheduleList.clientHeight);
+
+      if (max <= 2) {
+        scheduleList.scrollTop = 0;
+        stopScheduleScroll();
+        return;
+      }
+
+      const delta = scheduleScrollLastTime
+        ? Math.min(time - scheduleScrollLastTime, 100)
+        : 0;
+
+      scheduleScrollLastTime = time;
+
+      if (time >= scheduleScrollPauseUntil) {
+        const movement =
+          SCHEDULE_SCROLL_SPEED * delta / 1000;
+
+        let next =
+          scheduleList.scrollTop +
+          movement * scheduleScrollDirection;
+
+        if (next >= max) {
+          next = max;
+          scheduleScrollDirection = -1;
+          scheduleScrollPauseUntil =
+            time + SCHEDULE_PAUSE_MS;
+        }
+
+        if (next <= 0) {
+          next = 0;
+          scheduleScrollDirection = 1;
+          scheduleScrollPauseUntil =
+            time + SCHEDULE_PAUSE_MS;
+        }
+
+        scheduleList.scrollTop = next;
+      }
+
+      scheduleScrollFrame =
+        requestAnimationFrame(animate);
+    }
+
+    scheduleScrollFrame =
+      requestAnimationFrame(animate);
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      stopScheduleScroll();
+    } else if (schedulePanel && !schedulePanel.hidden) {
+      startScheduleScroll();
+    }
+  });
+
+  window.addEventListener('resize', () => {
+    if (schedulePanel && !schedulePanel.hidden) {
+      startScheduleScroll();
+    }
+  }, { passive: true });
+
   const scheduleStatus = document.querySelector('[data-schedule-status]');
   let lastScheduleFetch = 0;
   let scheduleBusy = false;
@@ -596,11 +720,7 @@ if (teamPanel) {
       scheduleList.replaceChildren(frag);
       scheduleStatus.textContent=valid.length?'':'Brak audycji na dziś';
       // W xatframe środek panelu może nie odbierać scrolla: pokazujemy bieżącą pozycję automatycznie.
-      requestAnimationFrame(()=>{
-        const active=scheduleList.querySelector('.is-current');
-        if(active) scheduleList.scrollTop=Math.max(0,active.offsetTop-scheduleList.offsetTop-scheduleList.clientHeight/3);
-        else scheduleList.scrollTop=0;
-      });
+      requestAnimationFrame(startScheduleScroll);
       lastScheduleFetch=Date.now();
     } catch(err){scheduleStatus.textContent='Nie udało się pobrać ramówki';console.warn('VirtualMix ramówka:',err);}
     finally {scheduleBusy=false;}
