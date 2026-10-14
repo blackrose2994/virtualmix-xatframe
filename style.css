@@ -819,3 +819,28 @@ body.is-preview .central-space {border:2px dashed #ffc85777;background:#8d95b216
   z-index: 2;
 }
 
+
+/* =========================================
+   RAMÓWKA — AUTOMATYCZNE PRZEWIJANIE
+   ========================================= */
+
+.vm-schedule-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  scroll-behavior: auto;
+  pointer-events: none;
+}
+
+.vm-schedule-list::-webkit-scrollbar {
+  display: none;
+}
+
+/* Audycje nie mogą się ściskać,
+   bo wtedy nie powstanie obszar przewijania */
+.vm-schedule-list .vm-schedule-entry {
+  flex: 0 0 auto;
+}
