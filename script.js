@@ -47,7 +47,7 @@ if (schedulePanel) {
 
   if (active === 2) {
     loadSchedule();
-    requestAnimationFrame(startScheduleScroll);
+    if (scheduleList.querySelector('.vm-schedule-track')) requestAnimationFrame(() => startScheduleScroll());
   } else {
     stopScheduleScroll();
   }
@@ -532,114 +532,79 @@ if (teamPanel) {
   const scheduleList = document.querySelector('[data-schedule-list]');
    
   // =========================================
-  // RAMÓWKA — PŁYNNE PRZEWIJANIE GÓRA/DÓŁ
+  // RAMÓWKA: automatyczna, płynna panorama
   // =========================================
-
-  const SCHEDULE_SCROLL_SPEED = 25; // piksele na sekundę
-  const SCHEDULE_PAUSE_MS = 2200;    // pauza na końcach
-
-  let scheduleScrollFrame = null;
-  let scheduleScrollDirection = 1;
-  let scheduleScrollLastTime = 0;
-  let scheduleScrollPauseUntil = 0;
+  const VM_SCHEDULE_SPEED = 36;       // px/s
+  const VM_SCHEDULE_PAUSE = 1700;     // ms na końcach
+  let vmScheduleAnimation = 0;
+  let vmScheduleLastFrame = 0;
+  let vmSchedulePosition = 0;
+  let vmScheduleDirection = 1;
+  let vmScheduleHoldUntil = 0;
 
   function stopScheduleScroll() {
-    if (scheduleScrollFrame !== null) {
-      cancelAnimationFrame(scheduleScrollFrame);
-      scheduleScrollFrame = null;
-    }
-    scheduleScrollLastTime = 0;
+    if (vmScheduleAnimation) cancelAnimationFrame(vmScheduleAnimation);
+    vmScheduleAnimation = 0;
+    vmScheduleLastFrame = 0;
   }
 
-  function startScheduleScroll() {
+  function startScheduleScroll(reset = true) {
     stopScheduleScroll();
+    if (!schedulePanel || schedulePanel.hidden || !scheduleList || document.hidden) return;
 
-    if (!schedulePanel ||
-        schedulePanel.hidden ||
-        !scheduleList ||
-        document.hidden) return;
+    const track = scheduleList.querySelector('.vm-schedule-track');
+    if (!track) return;
 
-    const maxScroll =
-      scheduleList.scrollHeight - scheduleList.clientHeight;
-
-    if (maxScroll <= 2) {
-      scheduleList.scrollTop = 0;
-      return;
+    // Rzeczywista wysokość wszystkich kart, niezależna od flex-shrink.
+    const measure = () => Math.max(0, track.getBoundingClientRect().height - scheduleList.clientHeight);
+    let distance = measure();
+    if (reset) {
+      vmSchedulePosition = 0;
+      vmScheduleDirection = 1;
+      vmScheduleHoldUntil = performance.now() + VM_SCHEDULE_PAUSE;
+    } else {
+      vmSchedulePosition = Math.min(vmSchedulePosition, distance);
     }
+    track.style.transform = `translate3d(0, ${-vmSchedulePosition}px, 0)`;
+    if (distance <= 1) return;
 
-    scheduleList.scrollTop = 0;
-    scheduleScrollDirection = 1;
-    scheduleScrollPauseUntil =
-      performance.now() + SCHEDULE_PAUSE_MS;
-
-    function animate(time) {
-      if (schedulePanel.hidden || document.hidden) {
+    function tick(now) {
+      if (document.hidden || schedulePanel.hidden || !track.isConnected) {
         stopScheduleScroll();
         return;
       }
-
-      const max =
-        Math.max(0,
-          scheduleList.scrollHeight -
-          scheduleList.clientHeight);
-
-      if (max <= 2) {
-        scheduleList.scrollTop = 0;
+      distance = measure();
+      if (distance <= 1) {
+        track.style.transform = 'translate3d(0,0,0)';
         stopScheduleScroll();
         return;
       }
-
-      const delta = scheduleScrollLastTime
-        ? Math.min(time - scheduleScrollLastTime, 100)
-        : 0;
-
-      scheduleScrollLastTime = time;
-
-      if (time >= scheduleScrollPauseUntil) {
-        const movement =
-          SCHEDULE_SCROLL_SPEED * delta / 1000;
-
-        let next =
-          scheduleList.scrollTop +
-          movement * scheduleScrollDirection;
-
-        if (next >= max) {
-          next = max;
-          scheduleScrollDirection = -1;
-          scheduleScrollPauseUntil =
-            time + SCHEDULE_PAUSE_MS;
+      const dt = vmScheduleLastFrame ? Math.min(now - vmScheduleLastFrame, 80) : 0;
+      vmScheduleLastFrame = now;
+      if (now >= vmScheduleHoldUntil) {
+        vmSchedulePosition += vmScheduleDirection * VM_SCHEDULE_SPEED * dt / 1000;
+        if (vmSchedulePosition >= distance) {
+          vmSchedulePosition = distance;
+          vmScheduleDirection = -1;
+          vmScheduleHoldUntil = now + VM_SCHEDULE_PAUSE;
+        } else if (vmSchedulePosition <= 0) {
+          vmSchedulePosition = 0;
+          vmScheduleDirection = 1;
+          vmScheduleHoldUntil = now + VM_SCHEDULE_PAUSE;
         }
-
-        if (next <= 0) {
-          next = 0;
-          scheduleScrollDirection = 1;
-          scheduleScrollPauseUntil =
-            time + SCHEDULE_PAUSE_MS;
-        }
-
-        scheduleList.scrollTop = next;
+        track.style.transform = `translate3d(0, ${-vmSchedulePosition.toFixed(3)}px, 0)`;
       }
-
-      scheduleScrollFrame =
-        requestAnimationFrame(animate);
+      vmScheduleAnimation = requestAnimationFrame(tick);
     }
-
-    scheduleScrollFrame =
-      requestAnimationFrame(animate);
+    vmScheduleAnimation = requestAnimationFrame(tick);
   }
 
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-      stopScheduleScroll();
-    } else if (schedulePanel && !schedulePanel.hidden) {
-      startScheduleScroll();
-    }
+    if (document.hidden) stopScheduleScroll();
+    else if (schedulePanel && !schedulePanel.hidden) startScheduleScroll(false);
   });
-
   window.addEventListener('resize', () => {
-    if (schedulePanel && !schedulePanel.hidden) {
-      startScheduleScroll();
-    }
+    if (schedulePanel && !schedulePanel.hidden) startScheduleScroll(false);
   }, { passive: true });
 
   const scheduleStatus = document.querySelector('[data-schedule-status]');
@@ -717,10 +682,12 @@ if (teamPanel) {
       const valid=rows.filter(r=>r && typeof r==='object').sort((a,b)=>String(a.start||'').localeCompare(String(b.start||'')));
       const frag=document.createDocumentFragment();let currentIndex=-1;
       valid.forEach((row,i)=>{const active=isCurrent(row,today.clock);if(active)currentIndex=i;frag.append(makeEntry(row,active));});
-      scheduleList.replaceChildren(frag);
+      const track = document.createElement('div');
+      track.className = 'vm-schedule-track';
+      track.appendChild(frag);
+      scheduleList.replaceChildren(track);
       scheduleStatus.textContent=valid.length?'':'Brak audycji na dziś';
-      // W xatframe środek panelu może nie odbierać scrolla: pokazujemy bieżącą pozycję automatycznie.
-      requestAnimationFrame(startScheduleScroll);
+      requestAnimationFrame(() => startScheduleScroll());
       lastScheduleFetch=Date.now();
     } catch(err){scheduleStatus.textContent='Nie udało się pobrać ramówki';console.warn('VirtualMix ramówka:',err);}
     finally {scheduleBusy=false;}
