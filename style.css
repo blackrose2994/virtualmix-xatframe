@@ -846,3 +846,9 @@ body.is-preview .central-space {border:2px dashed #ffc85777;background:#8d95b216
   flex: 0 0 auto !important;
   flex-shrink: 0 !important;
 }
+
+/* Ramówka: zapas pod ostatnią audycją przy dolnym zawróceniu. */
+.side__schedule .vm-schedule-track {
+  padding-bottom: 12px;
+  box-sizing: border-box;
+}
