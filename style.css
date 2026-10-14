@@ -790,7 +790,7 @@ body.is-preview .central-space {border:2px dashed #ffc85777;background:#8d95b216
   width: 100%;
   height: 100%;
 
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
 
   background: #000;
