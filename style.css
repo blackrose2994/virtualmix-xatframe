@@ -819,28 +819,30 @@ body.is-preview .central-space {border:2px dashed #ffc85777;background:#8d95b216
   z-index: 2;
 }
 
-
-/* =========================================
-   RAMÓWKA — AUTOMATYCZNE PRZEWIJANIE
-   ========================================= */
-
-.vm-schedule-list {
+/* ===================================================
+   RAMÓWKA: prawdziwie płynny przesuw całej listy.
+   Karty zachowują pełną wysokość, nawet przy małym panelu.
+   =================================================== */
+.side__schedule .vm-schedule-list {
+  display: block !important;
   flex: 1 1 auto;
   min-height: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: none;
-  scroll-behavior: auto;
+  overflow: hidden !important;
+  padding: 5px 1px;
   pointer-events: none;
+  scrollbar-width: none;
 }
-
-.vm-schedule-list::-webkit-scrollbar {
-  display: none;
+.side__schedule .vm-schedule-track {
+  display: flex;
+  flex-direction: column;
+  flex: none;
+  gap: 5px;
+  width: 100%;
+  height: max-content;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
 }
-
-/* Audycje nie mogą się ściskać,
-   bo wtedy nie powstanie obszar przewijania */
-.vm-schedule-list .vm-schedule-entry {
-  flex: 0 0 auto;
+.side__schedule .vm-schedule-track > .vm-schedule-entry {
+  flex: 0 0 auto !important;
+  flex-shrink: 0 !important;
 }
