@@ -749,3 +749,73 @@ body.is-preview .central-space {border:2px dashed #ffc85777;background:#8d95b216
 #vm-live-video { width:100%; height:100%; display:block; object-fit:contain; background:#000; pointer-events:none; }
 .vm-live-placeholder { position:absolute; inset:0; z-index:2; display:flex; justify-content:center; align-items:center; text-align:center; padding:12px; background:#02040a; color:#ffc18e; font-weight:800; font-size:clamp(10px,.85vw,13px); line-height:1.5; pointer-events:none; }
 .vm-live-placeholder[hidden] { display:none!important; }
+
+
+/* =========================================
+   VIRTUALMIX — LIVE CZYSTY OBRAZ
+   ========================================= */
+
+/* Ukrywamy ozdobne nakładki tylko nad LIVE */
+.side--right .side__mesh,
+.side--right .side__edge {
+  pointer-events: none;
+}
+
+/* Panel transmisji nad dekoracjami */
+.side__live {
+  z-index: 15;
+  isolation: isolate;
+}
+
+/* Ramka podglądu */
+.side__live .vm-live-screen {
+  position: relative;
+  isolation: isolate;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  background: #000;
+  border: 1px solid rgba(255,106,0,.65);
+  border-radius: 11px;
+  box-shadow: 0 0 18px rgba(255,106,0,.22);
+}
+
+/* Obraz z kamery */
+.side__live #vm-live-video {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+
+  display: block;
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+  object-position: center;
+
+  background: #000;
+  opacity: 1;
+
+  filter: none;
+  mix-blend-mode: normal;
+  pointer-events: none;
+}
+
+/* Komunikat tylko przy braku obrazu */
+.side__live .vm-live-placeholder {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  background: #02040a;
+}
+
+.side__live .vm-live-placeholder[hidden] {
+  display: none !important;
+}
+
+/* Scanlines zostają w tle,
+   ale nie nakładają się na obraz LIVE */
+.scanlines {
+  z-index: 2;
+}
+
