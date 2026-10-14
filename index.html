@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#030610">
   <meta name="description" content="VirtualMix — animowane tło xatframe">
   <title>VirtualMix | Xatframe</title>
-  <link rel="stylesheet" href="style.css?v=12">
-  <script src="script.js?v=12" defer></script>
+  <link rel="stylesheet" href="style.css?v=18">
+  <script src="https://cdn.jsdelivr.net/npm/livekit-client@2.22.3/dist/livekit-client.umd.min.js" defer></script>
+  <script src="script.js?v=18" defer></script>
 </head>
 <body>
-  <!-- Mały pasek w górnej strefie sterowania (wzorowany na układzie Trade). -->
   <header class="vm-top-controls" aria-label="Przełączanie zawartości paneli VirtualMix">
     <nav class="vm-top-group vm-top-group--blue" aria-label="Lewy panel">
       <button class="vm-top-button is-active" type="button" data-tab="1" aria-pressed="true" title="Lewy panel: ✦">✦</button>
@@ -23,7 +23,6 @@
       <button class="vm-top-button" type="button" data-tab="6" aria-pressed="false" title="Prawy panel: Forum">FORUM</button>
     </nav>
   </header>
-  <!-- Tylko dekoracja w tle: sam czat wyświetla xat/nXat nad tą stroną. -->
   <div class="stage">
     <div class="ambient ambient--left"></div><div class="ambient ambient--right"></div>
     <div class="grid-floor"></div><div class="scanlines"></div>
@@ -36,52 +35,31 @@
       </div>
       <div class="side__panel">
         <div class="side__edge"></div>
-        <div class="side__top"><span class="side__slashes">▰▰▰</span><span>VIRTUALMIX \\ BLUE</span></div>
+        <div class="side__top"><span class="side__slashes">▰▰▰</span><span>VIRTUALMIX \ BLUE</span></div>
         <div class="side__mesh"></div>
         <div class="side__home"><div class="side__ring ring--one"></div><div class="side__ring ring--two"></div>
-        <div class="side__note">♫</div>
-        <svg class="wave wave--blue" viewBox="0 0 600 180" preserveAspectRatio="none">
-          <path d="M-20 100 C60 10 110 175 190 85 S335 10 405 90 S530 160 620 55"/>
-          <path d="M-20 126 C60 36 120 175 200 100 S335 24 415 104 S535 165 620 83"/>
-          <path d="M-20 145 C70 57 125 180 205 120 S345 35 425 115 S540 173 620 110"/>
-        </svg>
-        <div class="equalizer" data-equalizer></div>
-        <div class="side__bottom">MUZYKA <span>✦</span> NA ŻYWO</div></div>
+          <div class="side__note">♫</div>
+          <svg class="wave wave--blue" viewBox="0 0 600 180" preserveAspectRatio="none">
+            <path d="M-20 100 C60 10 110 175 190 85 S335 10 405 90 S530 160 620 55"/>
+            <path d="M-20 126 C60 36 120 175 200 100 S335 24 415 104 S535 165 620 83"/>
+            <path d="M-20 145 C70 57 125 180 205 120 S345 35 425 115 S540 173 620 110"/>
+          </svg>
+          <div class="equalizer" data-equalizer></div>
+          <div class="side__bottom">MUZYKA <span>✦</span> NA ŻYWO</div>
+        </div>
         <section class="side__schedule" hidden data-schedule aria-label="Ramówka na dzisiaj">
-          <div class="vm-schedule-head">
-            <strong>RAMÓWKA NA DZIŚ</strong>
-            <span data-schedule-date>—</span>
-          </div>
+          <div class="vm-schedule-head"><strong>RAMÓWKA NA DZIŚ</strong><span data-schedule-date>—</span></div>
           <div class="vm-schedule-status" data-schedule-status aria-live="polite">Ładowanie ramówki…</div>
           <div class="vm-schedule-list" data-schedule-list></div>
-          <div class="vm-team-footer">
-    <span> </span>
-    <span></span>
-  </div>
+          <div class="vm-team-footer"><span> </span><span></span></div>
         </section>
-        
-<!-- EKIPA VIRTUALMIX -->
-<section class="side__team" hidden data-team aria-label="Ekipa VirtualMix">
-  <div class="vm-team-head">
-    <strong>NASZA EKIPA</strong>
-    <span data-team-count>VirtualMix</span>
-  </div>
-
-  <div class="vm-team-viewport" data-team-viewport>
-    <div class="vm-team-list" data-team-list>
-      <div class="vm-team-message">
-        Ładowanie ekipy…
-      </div>
-    </div>
-  </div>
-
-  <div class="vm-team-footer">
-    <span> </span>
-    <span data-team-page>—</span>
-  </div>
-</section>
-<!-- KONIEC EKIPY -->
-
+        <section class="side__team" hidden data-team aria-label="Ekipa VirtualMix">
+          <div class="vm-team-head"><strong>NASZA EKIPA</strong><span data-team-count>VirtualMix</span></div>
+          <div class="vm-team-viewport" data-team-viewport>
+            <div class="vm-team-list" data-team-list><div class="vm-team-message">Ładowanie ekipy…</div></div>
+          </div>
+          <div class="vm-team-footer"><span> </span><span data-team-page>—</span></div>
+        </section>
         <div class="side__empty" hidden aria-label="Miejsce na przyszłą zawartość"></div>
       </div>
     </div>
@@ -96,44 +74,23 @@
         <div class="side__top"><span>ORANGE // VIRTUALMIX</span><span class="side__slashes">▰▰▰</span></div>
         <div class="side__mesh"></div>
         <div class="side__home"><div class="side__ring ring--one"></div><div class="side__ring ring--two"></div>
-        <div class="side__note">♬</div>
-        <svg class="wave wave--orange" viewBox="0 0 600 180" preserveAspectRatio="none">
-          <path d="M-20 100 C60 10 110 175 190 85 S335 10 405 90 S530 160 620 55"/>
-          <path d="M-20 126 C60 36 120 175 200 100 S335 24 415 104 S535 165 620 83"/>
-          <path d="M-20 145 C70 57 125 180 205 120 S345 35 425 115 S540 173 620 110"/>
-        </svg>
-        <div class="equalizer" data-equalizer></div>
-        <div class="side__bottom">EKIPA <span>✦</span> ZABAWA</div></div>
-        
-<!-- MINI PODGLĄD LIVE VIRTUALMIX -->
-<section class="side__live" hidden data-live
-         aria-label="Podgląd transmisji Live">
-
-  <div class="vm-live-head">
-    <strong>TRANSMISJA LIVE</strong>
-    <span data-live-diagnostic>Oczekiwanie na podgląd…</span>
-  </div>
-
-  <div class="vm-live-screen">
-    
-<iframe
-  data-live-frame
-  title="VirtualMix — podgląd LIVE"
-  allow="autoplay *; encrypted-media *; picture-in-picture *; fullscreen *"
-  referrerpolicy="strict-origin-when-cross-origin"
-  loading="eager"
-></iframe>
-
-  </div>
-
-  <div class="vm-team-footer">
-    <span></span>
-    <span></span>
-  </div>
-
-</section>
-<!-- KONIEC LIVE -->
-
+          <div class="side__note">♬</div>
+          <svg class="wave wave--orange" viewBox="0 0 600 180" preserveAspectRatio="none">
+            <path d="M-20 100 C60 10 110 175 190 85 S335 10 405 90 S530 160 620 55"/>
+            <path d="M-20 126 C60 36 120 175 200 100 S335 24 415 104 S535 165 620 83"/>
+            <path d="M-20 145 C70 57 125 180 205 120 S345 35 425 115 S540 173 620 110"/>
+          </svg>
+          <div class="equalizer" data-equalizer></div>
+          <div class="side__bottom">EKIPA <span>✦</span> ZABAWA</div>
+        </div>
+        <section class="side__live" hidden data-live aria-label="Podgląd transmisji Live">
+          <div class="vm-live-head"><strong>TRANSMISJA LIVE</strong></div>
+          <div class="vm-live-screen">
+            <video id="vm-live-video" autoplay muted playsinline disablepictureinpicture controlslist="nodownload noplaybackrate noremoteplayback"></video>
+            <div class="vm-live-placeholder" id="vm-live-placeholder">NIKT TERAZ NIE NADAJE TRANSMISJI LIVE</div>
+          </div>
+          <div class="vm-team-footer"><span></span><span></span></div>
+        </section>
         <div class="side__empty" hidden aria-label="Miejsce na przyszłą zawartość"></div>
       </div>
     </div>
