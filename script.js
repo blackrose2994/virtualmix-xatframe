@@ -38,7 +38,7 @@
       });
       side.querySelector('.side__home').hidden = active !== initial;
       side.querySelector('.side__empty').hidden =
-  active === initial || (isLeft && (active === 2 || active === 3));
+  active === initial || (isLeft && (active === 2 || active === 3)) || (!isLeft && active === 5);
       const schedulePanel = side.querySelector('[data-schedule]');
       if (schedulePanel) { schedulePanel.hidden = active !== 2; if (active === 2) loadSchedule(); }
        const teamPanel = side.querySelector('[data-team]');
@@ -352,83 +352,165 @@ if (teamPanel) {
 
    
   // =========================================
-  // VIRTUALMIX — PODGLĄD LIVE BEZ DŹWIĘKU
+  // VIRTUALMIX — BEZPOŚREDNI PODGLĄD WEBRTC
   // =========================================
+  const LIVE_API_URL = 'https://virtualmix.pl/vm_live_embed_proxy.php?api=p2p';
+  const liveVideo = document.getElementById('vm-live-video');
+  const livePlaceholder = document.getElementById('vm-live-placeholder');
+  let liveEnabled = false;
+  let liveEpoch = 0;
+  let liveSession = null;
+  let liveBusy = false;
+  let liveRetryTimer = null;
+  let liveHeartbeatTimer = null;
 
-  const LIVE_PREVIEW_URL =
-    'https://virtualmix.pl/vm_live_embed_proxy.php?muted_preview=1';
-
-  const liveFrame =
-    document.querySelector('[data-live-frame]');
-
-  let livePreviewEnabled = false;
-
-  function setLivePreview(enabled) {
-    if (!liveFrame) return;
-
-    if (enabled && !livePreviewEnabled) {
-      liveFrame.src = LIVE_PREVIEW_URL;
-       checkLivePermissions();
-      livePreviewEnabled = true;
-    }
-
-    if (!enabled && livePreviewEnabled) {
-      liveFrame.removeAttribute('src');
-      livePreviewEnabled = false;
+  function liveMessage(message) {
+    if (livePlaceholder) {
+      livePlaceholder.textContent = message;
+      livePlaceholder.hidden = false;
     }
   }
-
-
-  // Diagnostyka odtwarzacza LIVE
-  const liveDiagnostic =
-    document.querySelector('[data-live-diagnostic]');
-
-  function liveInfo(message) {
-    if (liveDiagnostic) {
-      liveDiagnostic.textContent = message;
-    }
+  function liveReset() {
+    if (!liveVideo) return;
+    try { liveVideo.pause(); liveVideo.srcObject = null; } catch (_) {}
+    liveVideo.muted = true;
+    liveVideo.defaultMuted = true;
+    liveVideo.volume = 0;
   }
-
-  if (liveFrame) {
-    liveFrame.addEventListener('load', () => {
-      liveInfo('Player załadowany — sprawdzam obraz…');
+  async function liveApi(act, payload = {}) {
+    const response = await fetch(LIVE_API_URL, {
+      method: 'POST', mode: 'cors', cache: 'no-store',
+      headers: {'Content-Type':'application/json','Accept':'application/json'},
+      body: JSON.stringify({act, ...payload})
     });
-
-    liveFrame.addEventListener('error', () => {
-      liveInfo('Błąd ładowania odtwarzacza');
-    });
-  }
-
-  window.addEventListener('message', event => {
-    if (event.origin !== 'https://virtualmix.pl') return;
-    if (!liveFrame ||
-        event.source !== liveFrame.contentWindow) return;
-
-    const data = event.data;
-
-    if (!data || data.type !== 'vm-live-probe') return;
-
-    if (data.state === 'active') {
-      liveInfo('● OBRAZ LIVE AKTYWNY');
-    } else if (data.state === 'inactive') {
-      liveInfo('● Player zgłasza brak transmisji');
-    } else {
-      liveInfo('● Player nie wykrywa obrazu');
+    const data = await response.json();
+    if (!response.ok || data.err) {
+      throw new Error(data.msg || data.err || `HTTP ${response.status}`);
     }
+    return data;
+  }
+  const liveCredentials = session => ({
+    room: session.roomName,
+    peer_id: session.peerId,
+    peer_secret: session.secret
   });
-
-  // Kontrola polityki osadzania
-  function checkLivePermissions() {
-    const policy =
-      document.permissionsPolicy ||
-      document.featurePolicy;
-
-    if (
-      policy &&
-      typeof policy.allowsFeature === 'function' &&
-      !policy.allowsFeature('autoplay')
-    ) {
-      liveInfo('BLOKADA: autoplay niedozwolony');
+  function liveRetry(ms = 4000) {
+    clearTimeout(liveRetryTimer);
+    if (liveEnabled) liveRetryTimer = setTimeout(liveConnect, ms);
+  }
+  async function liveClose(session, notify = true) {
+    if (!session || session.closing) return;
+    session.closing = true;
+    if (liveSession === session) {
+      liveSession = null;
+      clearInterval(liveHeartbeatTimer);
+      liveHeartbeatTimer = null;
+      liveReset();
+    }
+    try { await session.room.disconnect(); } catch (_) {}
+    if (notify) {
+      try { await liveApi('publicLeave', liveCredentials(session)); } catch (_) {}
+    }
+  }
+  async function liveConnect() {
+    if (!liveEnabled || liveBusy || liveSession) return;
+    clearTimeout(liveRetryTimer);
+    const LK = window.LivekitClient;
+    if (!LK?.Room) {
+      liveMessage('OCZEKIWANIE NA ODTWARZACZ LIVE');
+      liveRetry(5000);
+      return;
+    }
+    const epoch = liveEpoch;
+    liveBusy = true;
+    let session = null;
+    try {
+      const joined = await liveApi('publicJoin', {room:''});
+      if (!liveEnabled || epoch !== liveEpoch) return;
+      const room = new LK.Room({adaptiveStream:false, dynacast:true});
+      session = {
+        room, roomName:joined.room, peerId:joined.peer_id,
+        secret:joined.peer_secret, closing:false
+      };
+      liveSession = session;
+      room.on(LK.RoomEvent.TrackSubscribed, (track, publication) => {
+        if (liveSession !== session || !liveEnabled) return;
+        if (track.kind === LK.Track.Kind.Audio) {
+          // Dźwięk nie jest odtwarzany ani wykorzystywany.
+          try { publication?.setSubscribed(false); } catch (_) {}
+          return;
+        }
+        if (track.kind !== LK.Track.Kind.Video || !liveVideo) return;
+        track.attach(liveVideo);
+        liveVideo.muted = true;
+        liveVideo.defaultMuted = true;
+        liveVideo.volume = 0;
+        liveVideo.play().then(() => {
+          if (liveSession === session && livePlaceholder) livePlaceholder.hidden = true;
+        }).catch(() => liveMessage('OCZEKIWANIE NA OBRAZ LIVE'));
+      });
+      room.on(LK.RoomEvent.TrackUnsubscribed, track => {
+        if (liveSession !== session || track.kind !== LK.Track.Kind.Video) return;
+        try { track.detach(liveVideo); } catch (_) {}
+        liveReset();
+        liveMessage('OCZEKIWANIE NA OBRAZ LIVE');
+      });
+      room.on(LK.RoomEvent.Disconnected, () => {
+        if (liveSession !== session || session.closing) return;
+        liveClose(session, false).then(() => {
+          if (liveEnabled) { liveMessage('OCZEKIWANIE NA TRANSMISJĘ LIVE'); liveRetry(3000); }
+        });
+      });
+      await room.connect(joined.server_url, joined.token, {autoSubscribe:true});
+      if (!liveEnabled || epoch !== liveEpoch || liveSession !== session) {
+        await liveClose(session);
+        return;
+      }
+      // Wyłączamy subskrypcję audio również dla ścieżek już opublikowanych.
+      room.remoteParticipants.forEach(p => {
+        p.audioTrackPublications.forEach(pub => {
+          try { pub.setSubscribed(false); } catch (_) {}
+        });
+      });
+      room.on(LK.RoomEvent.TrackPublished, publication => {
+        if (publication.kind === LK.Track.Kind.Audio) {
+          try { publication.setSubscribed(false); } catch (_) {}
+        }
+      });
+      liveHeartbeatTimer = setInterval(async () => {
+        if (!liveEnabled || liveSession !== session) return;
+        try {
+          const state = await liveApi('publicHeartbeat', liveCredentials(session));
+          if (state.ended) {
+            await liveClose(session, false);
+            if (liveEnabled) { liveMessage('NIKT TERAZ NIE NADAJE TRANSMISJI LIVE'); liveRetry(3000); }
+          }
+        } catch (_) { /* Chwilowy problem z łącznością. */ }
+      }, 8000);
+    } catch (err) {
+      console.warn('VirtualMix LIVE:', err);
+      if (session) await liveClose(session);
+      if (liveEnabled && epoch === liveEpoch) {
+        liveMessage('OCZEKIWANIE NA TRANSMISJĘ LIVE');
+        liveRetry(5000);
+      }
+    } finally {
+      liveBusy = false;
+    }
+  }
+  function setLivePreview(enabled) {
+    liveEnabled = !!enabled;
+    liveEpoch++;
+    if (liveEnabled) {
+      liveMessage('ŁĄCZENIE Z TRANSMISJĄ LIVE…');
+      liveConnect();
+    } else {
+      clearTimeout(liveRetryTimer);
+      clearInterval(liveHeartbeatTimer);
+      const previous = liveSession;
+      liveSession = null;
+      liveReset();
+      if (previous) liveClose(previous);
     }
   }
 
