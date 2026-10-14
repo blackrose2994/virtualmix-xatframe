@@ -556,7 +556,15 @@ if (teamPanel) {
     if (!track) return;
 
     // Rzeczywista wysokość wszystkich kart, niezależna od flex-shrink.
-    const measure = () => Math.max(0, track.getBoundingClientRect().height - scheduleList.clientHeight);
+    const measure = () => {
+      // Uwzględnij padding widocznego okna: ostatnia karta nie może
+      // zatrzymać się pod dolną krawędzią / maską panelu.
+      const css = getComputedStyle(scheduleList);
+      const top = parseFloat(css.paddingTop) || 0;
+      const bottom = parseFloat(css.paddingBottom) || 0;
+      const viewport = Math.max(0, scheduleList.clientHeight - top - bottom);
+      return Math.max(0, track.scrollHeight - viewport);
+    };
     let distance = measure();
     if (reset) {
       vmSchedulePosition = 0;
