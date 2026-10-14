@@ -378,6 +378,59 @@ if (teamPanel) {
   }
 
 
+  // Diagnostyka odtwarzacza LIVE
+  const liveDiagnostic =
+    document.querySelector('[data-live-diagnostic]');
+
+  function liveInfo(message) {
+    if (liveDiagnostic) {
+      liveDiagnostic.textContent = message;
+    }
+  }
+
+  if (liveFrame) {
+    liveFrame.addEventListener('load', () => {
+      liveInfo('Player załadowany — sprawdzam obraz…');
+    });
+
+    liveFrame.addEventListener('error', () => {
+      liveInfo('Błąd ładowania odtwarzacza');
+    });
+  }
+
+  window.addEventListener('message', event => {
+    if (event.origin !== 'https://virtualmix.pl') return;
+    if (!liveFrame ||
+        event.source !== liveFrame.contentWindow) return;
+
+    const data = event.data;
+
+    if (!data || data.type !== 'vm-live-probe') return;
+
+    if (data.state === 'active') {
+      liveInfo('● OBRAZ LIVE AKTYWNY');
+    } else if (data.state === 'inactive') {
+      liveInfo('● Player zgłasza brak transmisji');
+    } else {
+      liveInfo('● Player nie wykrywa obrazu');
+    }
+  });
+
+  // Kontrola polityki osadzania
+  function checkLivePermissions() {
+    const policy =
+      document.permissionsPolicy ||
+      document.featurePolicy;
+
+    if (
+      policy &&
+      typeof policy.allowsFeature === 'function' &&
+      !policy.allowsFeature('autoplay')
+    ) {
+      liveInfo('BLOKADA: autoplay niedozwolony');
+    }
+  }
+
   // Publiczne proxy ramówki VirtualMix.
   const SCHEDULE_PROXY_URL = 'https://virtualmix.pl/vm_schedule_week_proxy.php';
   const schedulePanel = document.querySelector('[data-schedule]');
