@@ -1044,8 +1044,8 @@ padding-left: 1px;
 
 .vm-post-logo::after {
     content: "♫";
-    font-size: 22px;
+    font-size: 18px;
     line-height: 1;
     display: block;
-    transform: translate(1px, -2px);
+    transform: translate(2px, -4px);
 }
