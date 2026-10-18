@@ -994,3 +994,16 @@ body.is-preview .central-space {border:2px dashed #ffc85777;background:#8d95b216
 .side__team .vm-team-head,
 .side__live .vm-live-head,
 .side__posts .vm-posts-head { padding-top: 3px; padding-bottom: 5px; }
+
+/* VIRTUALMIX — korekta położenia stopek */
+
+.side__schedule .vm-team-footer,
+.side__team .vm-team-footer,
+.side__live .vm-team-footer,
+.vm-posts-footer {
+    flex: 0 0 15px;
+    height: 15px;
+    min-height: 15px;
+    padding: 5px 2px 0;
+    transform: none;
+}
