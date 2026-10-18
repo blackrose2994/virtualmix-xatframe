@@ -1021,3 +1021,17 @@ body.is-preview .central-space {border:2px dashed #ffc85777;background:#8d95b216
         bottom: 7px;
     }
 }
+
+.vm-post-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    text-indent: 0;
+    padding: 0;
+    transform: none;
+}
+
+.vm-post-logo::first-letter {
+    font-size: 16px;
+}
