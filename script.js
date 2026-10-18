@@ -38,7 +38,7 @@
       });
       side.querySelector('.side__home').hidden = active !== initial;
       side.querySelector('.side__empty').hidden =
-  active === initial || (isLeft && (active === 2 || active === 3)) || (!isLeft && active === 5);
+  active === initial || (isLeft && (active === 2 || active === 3)) || (!isLeft && (active === 5 || active === 6));
       
 const schedulePanel = side.querySelector('[data-schedule]');
 
@@ -67,6 +67,15 @@ if (teamPanel) {
 
         livePanel.hidden = !showLive;
         setLivePreview(showLive);
+      }
+
+      // POSTY — osobny panel, niezależny od transmisji LIVE.
+      const postsSection = side.querySelector('[data-posts]');
+      if (postsSection) {
+        const showingPosts = active === 6;
+        postsSection.hidden = !showingPosts;
+        if (showingPosts) loadFacebookPosts();
+        else stopFacebookScroll();
       }
 
     });
@@ -701,6 +710,163 @@ if (teamPanel) {
     finally {scheduleBusy=false;}
   }
   setInterval(()=>{if(schedulePanel && !schedulePanel.hidden)loadSchedule(true);},60000);
+
+  // =========================================
+  // FACEBOOK POSTY — odczyt przez bezpieczne proxy PHP
+  // =========================================
+  const FACEBOOK_POSTS_URL = 'https://virtualmix.pl/vm_facebook_posts_proxy.php';
+  const fbPanel = document.querySelector('[data-posts]');
+  const fbViewport = document.querySelector('[data-posts-viewport]');
+  const fbTrack = document.querySelector('[data-posts-track]');
+  const fbStatus = document.querySelector('[data-posts-status]');
+  const fbCount = document.querySelector('[data-posts-count]');
+  const FB_SCROLL_SPEED = 22; // px/s: długie teksty czytają się wolniej
+  const FB_SCROLL_PAUSE = 2300;
+  let fbBusy = false;
+  let fbLoaded = false;
+  let fbLastFetch = 0;
+  let fbRaf = 0;
+  let fbLastFrame = 0;
+  let fbPosition = 0;
+  let fbDirection = 1;
+  let fbHoldUntil = 0;
+
+  function stopFacebookScroll() {
+    if (fbRaf) cancelAnimationFrame(fbRaf);
+    fbRaf = 0;
+    fbLastFrame = 0;
+  }
+
+  function startFacebookScroll(reset = true) {
+    stopFacebookScroll();
+    if (!fbPanel || fbPanel.hidden || document.hidden || !fbViewport || !fbTrack) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const maxOffset = () => Math.max(0, fbTrack.scrollHeight - fbViewport.clientHeight);
+    let distance = maxOffset();
+    if (reset) {
+      fbPosition = 0;
+      fbDirection = 1;
+      fbHoldUntil = performance.now() + FB_SCROLL_PAUSE;
+    } else fbPosition = Math.min(fbPosition, distance);
+    fbTrack.style.transform = `translate3d(0, ${-fbPosition}px, 0)`;
+    if (distance <= 1 || reduced) return;
+
+    const tick = now => {
+      if (document.hidden || fbPanel.hidden || !fbTrack.isConnected) {
+        stopFacebookScroll(); return;
+      }
+      distance = maxOffset();
+      if (distance <= 1) {
+        fbPosition = 0;
+        fbTrack.style.transform = 'translate3d(0,0,0)';
+        stopFacebookScroll(); return;
+      }
+      const dt = fbLastFrame ? Math.min(now - fbLastFrame, 80) : 0;
+      fbLastFrame = now;
+      if (now >= fbHoldUntil) {
+        fbPosition += fbDirection * FB_SCROLL_SPEED * dt / 1000;
+        if (fbPosition >= distance) {
+          fbPosition = distance; fbDirection = -1; fbHoldUntil = now + FB_SCROLL_PAUSE;
+        } else if (fbPosition <= 0) {
+          fbPosition = 0; fbDirection = 1; fbHoldUntil = now + FB_SCROLL_PAUSE;
+        }
+        fbTrack.style.transform = `translate3d(0, ${-fbPosition.toFixed(2)}px, 0)`;
+      }
+      fbRaf = requestAnimationFrame(tick);
+    };
+    fbRaf = requestAnimationFrame(tick);
+  }
+
+  const fbDateFormat = new Intl.DateTimeFormat('pl-PL', {
+    timeZone: 'Europe/Warsaw', day:'2-digit', month:'2-digit', year:'numeric',
+    hour:'2-digit', minute:'2-digit'
+  });
+
+  function makeFacebookPost(post) {
+    const card = document.createElement('article');
+    card.className = 'vm-post-card';
+    const head = document.createElement('div');
+    head.className = 'vm-post-head';
+    const logo = document.createElement('span');
+    logo.className = 'vm-post-logo';
+    logo.textContent = '♫';
+    const info = document.createElement('div');
+    info.className = 'vm-post-author';
+    const name = document.createElement('strong');
+    name.textContent = 'VirtualMix';
+    const date = document.createElement('time');
+    const validDate = new Date(post.created_time);
+    date.textContent = Number.isFinite(validDate.getTime()) ? fbDateFormat.format(validDate) : '';
+    if (date.textContent) date.dateTime = validDate.toISOString();
+    info.append(name, date);
+    const facebook = document.createElement('span');
+    facebook.className = 'vm-post-fb';
+    facebook.textContent = 'f';
+    head.append(logo, info, facebook);
+    card.append(head);
+
+    const message = String(post.message || '').trim();
+    if (message) {
+      const body = document.createElement('div');
+      body.className = 'vm-post-body';
+      body.textContent = message; // bez innerHTML: emoji działają, HTML nie jest wykonywany
+      card.append(body);
+    }
+    const url = getSafeAvatar(post.full_picture);
+    if (url) {
+      const img = document.createElement('img');
+      img.className = 'vm-post-photo';
+      img.src = url;
+      img.alt = 'Zdjęcie do wpisu na Facebooku';
+      img.loading = 'eager';
+      img.decoding = 'async';
+      img.referrerPolicy = 'no-referrer';
+      img.addEventListener('load', () => {
+        if (fbPanel && !fbPanel.hidden) startFacebookScroll(false);
+      }, {once:true});
+      img.addEventListener('error', () => img.remove(), {once:true});
+      card.append(img);
+    }
+    return card;
+  }
+
+  async function loadFacebookPosts(force = false) {
+    if (!fbPanel || fbPanel.hidden || !fbTrack || fbBusy) return;
+    if (!force && fbLoaded && Date.now() - fbLastFetch < 300000) {
+      startFacebookScroll(false); return;
+    }
+    fbBusy = true;
+    if (!fbLoaded && fbStatus) fbStatus.textContent = 'Ładowanie postów z Facebooka…';
+    try {
+      const response = await fetch(FACEBOOK_POSTS_URL, {mode:'cors',cache:'no-store'});
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      const payload = await response.json();
+      if (payload.ok === false || !Array.isArray(payload.posts)) throw new Error('Niepoprawna odpowiedź proxy');
+      const posts = payload.posts.slice(0,5);
+      const fragment = document.createDocumentFragment();
+      posts.forEach(post => fragment.append(makeFacebookPost(post)));
+      fbTrack.replaceChildren(fragment);
+      fbLoaded = true;
+      fbLastFetch = Date.now();
+      if (fbCount) fbCount.textContent = `${posts.length} ${posts.length === 1 ? 'POST' : 'POSTÓW'}`;
+      if (fbStatus) fbStatus.textContent = posts.length ? '' : 'Na razie nie ma opublikowanych postów.';
+      requestAnimationFrame(() => startFacebookScroll());
+    } catch (err) {
+      console.warn('VirtualMix Facebook:', err);
+      if (!fbLoaded && fbStatus) fbStatus.textContent = 'Posty chwilowo niedostępne.';
+    } finally { fbBusy = false; }
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stopFacebookScroll();
+    else if (fbPanel && !fbPanel.hidden) startFacebookScroll(false);
+  });
+  window.addEventListener('resize', () => {
+    if (fbPanel && !fbPanel.hidden) startFacebookScroll(false);
+  }, {passive:true});
+  setInterval(() => {
+    if (fbPanel && !fbPanel.hidden && !document.hidden) loadFacebookPosts(true);
+  }, 300000);
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const canvas = document.getElementById('particles');
