@@ -1030,6 +1030,8 @@ body.is-preview .central-space {border:2px dashed #ffc85777;background:#8d95b216
     text-indent: 0;
     padding: 0;
     transform: none;
+  padding-bottom: 2px;
+padding-left: 1px;
 }
 
 .vm-post-logo::first-letter {
