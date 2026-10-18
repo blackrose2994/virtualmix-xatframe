@@ -852,3 +852,37 @@ body.is-preview .central-space {border:2px dashed #ffc85777;background:#8d95b216
   padding-bottom: 0px;
   box-sizing: border-box;
 }
+
+/* FACEBOOK — prawy pomarańczowy panel (zakładka 6) */
+.side__posts[hidden] { display:none!important; }
+.side__posts {
+  position:absolute; z-index:15; inset:44px 7px 39px;
+  display:flex; flex-direction:column; min-height:0; overflow:hidden;
+  color:#fff4e9; font:12px/1.38 Arial,sans-serif; pointer-events:none;
+}
+.vm-posts-head { flex:0 0 auto; display:flex; align-items:center; justify-content:space-between;
+  gap:5px; border-bottom:1px solid #ff6a004c; padding:4px 2px 9px;
+  font-size:clamp(9px,.8vw,12px); color:#ffb783; letter-spacing:.06em; }
+.vm-posts-head span {font-size:9px; color:#f2b88f;white-space:nowrap;}
+.vm-posts-status {font-size:11px;color:#ffc89f;text-align:center;padding:9px 3px;}
+.vm-posts-status:empty {display:none;}
+.vm-posts-viewport {flex:1 1 auto;min-height:0;overflow:hidden;padding:5px 1px;}
+.vm-posts-track {display:flex;flex-direction:column;gap:10px;width:100%;height:max-content;will-change:transform;}
+.vm-post-card {flex:none;min-width:0;padding:9px;border:1px solid #ff822e50;
+  border-radius:11px;background:linear-gradient(135deg,#21140ff2,#0b101efa);
+  box-shadow:inset 3px 0 #ff7a3666,inset 0 1px #ffffff0d;overflow:hidden;}
+.vm-post-head {display:flex;align-items:center;gap:7px;margin-bottom:8px;}
+.vm-post-logo {display:grid;place-items:center;flex:0 0 29px;width:29px;height:29px;border-radius:50%;
+  color:white;font-weight:900;font-size:16px;background:linear-gradient(135deg,#ff6a00,#b43f08);}
+.vm-post-author {display:flex;flex:1;min-width:0;flex-direction:column;gap:1px;}
+.vm-post-author strong {font-size:11px;color:#fff;}
+.vm-post-author time {font-size:9px;color:#f5ac79;}
+.vm-post-fb {font:bold 17px Arial;color:#8eb8ff;}
+.vm-post-body {white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal;color:#f6e6db;font-size:clamp(10px,.78vw,12px);line-height:1.48;}
+.vm-post-photo {display:block;width:100%;height:auto;max-height:190px;object-fit:contain;
+ margin-top:8px;border-radius:7px;border:1px solid #ff6a003d;background:#070810;}
+.vm-posts-footer {flex:0 0 auto;padding:6px 2px 0;border-top:1px solid #ff6a0040;
+ font-size:8px;font-weight:800;letter-spacing:.08em;color:#df9b68;text-align:center;}
+@media(max-width:1250px){.side__posts {inset:14px 4px 14px;} .vm-post-card {padding:6px;} .vm-post-photo {max-height:120px;}}
+@media(max-height:700px){.side__posts{inset:12px 4px 12px;}.vm-post-photo {max-height:110px;}}
+@media(prefers-reduced-motion:reduce){.vm-posts-viewport{overflow:auto;scrollbar-width:thin;}}
