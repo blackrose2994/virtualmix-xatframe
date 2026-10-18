@@ -1037,3 +1037,15 @@ padding-left: 1px;
 .vm-post-logo::first-letter {
     font-size: 16px;
 }
+
+.vm-post-logo {
+    font-size: 0 !important;
+}
+
+.vm-post-logo::after {
+    content: "♫";
+    font-size: 22px;
+    line-height: 1;
+    display: block;
+    transform: translate(1px, -2px);
+}
