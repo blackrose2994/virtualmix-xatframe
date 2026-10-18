@@ -967,17 +967,6 @@ body.is-preview .central-space {border:2px dashed #ffc85777;background:#8d95b216
  .side__posts .vm-posts-footer { letter-spacing: 0; font-size: 7px; gap: 3px; }
 }
 
-/* V24 — niżej położone stopki i więcej miejsca na 8 kart ekipy.
-   Zachowujemy dotychczasowe rozmiary kart i ich odstępy. */
-@media (min-width: 1251px) and (min-height: 701px) {
-  .side__schedule, .side__team, .side__live, .side__posts { bottom: 10px; }
-}
-@media (max-width: 1250px) and (min-height: 701px) {
-  .side__schedule, .side__team, .side__live, .side__posts { bottom: 5px; }
-}
-@media (max-height: 700px) {
-  .side__schedule, .side__team, .side__live, .side__posts { bottom: 4px; }
-}
 .side__schedule .vm-team-footer,
 .side__team .vm-team-footer,
 .side__live .vm-team-footer,
@@ -995,15 +984,40 @@ body.is-preview .central-space {border:2px dashed #ffc85777;background:#8d95b216
 .side__live .vm-live-head,
 .side__posts .vm-posts-head { padding-top: 3px; padding-bottom: 5px; }
 
-/* VIRTUALMIX — korekta położenia stopek */
+/* VIRTUALMIX — precyzyjna korekta stopki o 5px */
+
+.side__schedule,
+.side__team,
+.side__live,
+.side__posts {
+    bottom: 34px;
+}
 
 .side__schedule .vm-team-footer,
 .side__team .vm-team-footer,
 .side__live .vm-team-footer,
-.vm-posts-footer {
-    flex: 0 0 15px;
-    height: 15px;
-    min-height: 15px;
+.side__posts .vm-posts-footer {
+    flex: 0 0 18px;
+    height: 18px;
+    min-height: 18px;
     padding: 5px 2px 0;
     transform: none;
+}
+
+@media (max-width: 1250px) {
+    .side__schedule,
+    .side__team,
+    .side__live,
+    .side__posts {
+        bottom: 9px;
+    }
+}
+
+@media (max-height: 700px) {
+    .side__schedule,
+    .side__team,
+    .side__live,
+    .side__posts {
+        bottom: 7px;
+    }
 }
