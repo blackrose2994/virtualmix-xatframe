@@ -1047,5 +1047,5 @@ padding-left: 1px;
     font-size: 18px;
     line-height: 1;
     display: block;
-    transform: translate(1px, 0px);
+    transform: translate(-2px, -2px);
 }
